@@ -18,3 +18,4 @@ interaction:
 
 provision:
   - dip bundle install
+  - dip rails db:migrate
