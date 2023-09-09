@@ -1,0 +1,6 @@
+version: '4'
+
+interaction:
+  bash:
+    service: app
+    command: bash
