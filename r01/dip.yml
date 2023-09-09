@@ -7,3 +7,14 @@ interaction:
   bundle:
     service: app
     command: bundle
+  rails:
+    service: app
+    command: bundle exec rails
+    subcommands:
+      s:
+        command: bundle exec rails s -b 0.0.0.0
+        compose:
+          run_options: [service-ports]
+
+provision:
+  - dip bundle install
