@@ -4,3 +4,6 @@ interaction:
   bash:
     service: app
     command: bash
+  bundle:
+    service: app
+    command: bundle
