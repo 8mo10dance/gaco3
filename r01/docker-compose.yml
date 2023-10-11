@@ -10,6 +10,12 @@ services:
     ports:
       - '3000:3000'
     command: bundle exec rails s -b 0.0.0.0
+  localstack:
+    image: localstack/localstack
+    ports:
+      - '4566:4566'
+    environment:
+      SERVICES: s3
 
 volumes:
   bundle:
