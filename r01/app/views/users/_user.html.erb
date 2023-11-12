@@ -6,7 +6,7 @@
   <p>
     <strong>Avatar:</strong>
     <% if user.avatar.present? %>
-      <%= image_tag user.avatar.url %>
+      <%= image_tag user.avatar.image.url %>
     <% end %>
   </p>
 </div>

@@ -1,4 +1,4 @@
-<%= form_with(model: user) do |form| %>
+<%= form_with(model: user,  data: { controller: 'user' }) do |form| %>
   <% if user.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
@@ -17,9 +17,13 @@
   </div>
 
   <div>
-    <%= form.label :avatar, style: "display: block" %>
-    <%= form.file_field :avatar %>
+    <label>
+      Avatar
+      <input type="file" data-action="change->user#changeAvatar" />
+    </label>
   </div>
+
+  <%= form.hidden_field :avatar_id, data: { user_target: 'avatarIdField' } %>
 
   <div>
     <%= form.submit %>
