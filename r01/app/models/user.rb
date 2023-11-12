@@ -1,3 +1,3 @@
 class User < ApplicationRecord
-  mount_uploader :avatar, AvatarUploader
+  has_one :avatar, class_name: 'UserAvatar', dependent: :destroy
 end

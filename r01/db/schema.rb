@@ -10,12 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_09_052102) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_12_123542) do
+  create_table "user_avatars", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "image", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_avatars_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "avatar"
   end
 
+  add_foreign_key "user_avatars", "users"
 end
