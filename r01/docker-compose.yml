@@ -9,6 +9,9 @@ services:
       - bundle:/usr/local/bundle
     ports:
       - '3000:3000'
+    environment:
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
     command: bundle exec rails s -b 0.0.0.0
   localstack:
     image: localstack/localstack
