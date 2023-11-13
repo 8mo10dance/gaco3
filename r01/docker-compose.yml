@@ -14,11 +14,15 @@ services:
       AWS_SECRET_ACCESS_KEY: dummy
     command: bundle exec rails s -b 0.0.0.0
   localstack:
-    image: localstack/localstack
+    image: localstack/localstack:0.14.5
     ports:
       - '4566:4566'
     environment:
       SERVICES: s3
+      DATA_DIR: /tmp/localstack/data
+    volumes:
+      - localstack:/tmp/localstack
 
 volumes:
   bundle:
+  localstack:
