@@ -3,10 +3,17 @@ import { Controller } from "@hotwired/stimulus"
 import { apiRequest } from '../helpers/api'
 
 export default class extends Controller {
-  static targets = ['avatarIdField']
+  static targets = ['avatarIdField', 'avatarImageArea']
 
   set avatarId(avatarId) {
     this.avatarIdFieldTarget.value = avatarId
+  }
+
+  set avatarImageUrl(avatarImageUrl) {
+    const imageEl = document.createElement('img')
+    imageEl.src = avatarImageUrl
+    imageEl.alt = ''
+    this.avatarImageAreaTarget.appendChild(imageEl)
   }
 
   async changeAvatar(event) {
@@ -18,6 +25,7 @@ export default class extends Controller {
       if (response.ok) {
         const data = await response.json()
         this.avatarId = data['user_avatar_id']
+        this.avatarImageUrl = data['user_avatar_url']
       }
     } catch (err) {
       console.log(err)

@@ -21,6 +21,7 @@
       Avatar
       <input type="file" data-action="change->user#changeAvatar" />
     </label>
+    <div data-user-target="avatarImageArea"></div>
   </div>
 
   <%= form.hidden_field :avatar_id, data: { user_target: 'avatarIdField' } %>

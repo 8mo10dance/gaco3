@@ -8,7 +8,7 @@ module Api
         end
 
         user_avatar.save!
-        render json: { user_avatar_id: user_avatar.id }
+        render json: { user_avatar_id: user_avatar.id, user_avatar_url: user_avatar.image.url }
       end
 
       private
