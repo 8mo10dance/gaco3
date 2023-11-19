@@ -12,3 +12,8 @@
 </div>
 
 <%= link_to "New user", new_user_path %>
+
+<div x-data="{ count: 0 }">
+  <button x-on:click="count++">inc</button>
+  <span x-text="count"></span>
+</div>
