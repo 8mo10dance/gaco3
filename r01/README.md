@@ -1,36 +1,24 @@
-# LocalStack の動かし方
+# r01の動かし方
+
+```bash
+$ dip provison
+$ dip up -d
+```
+
+## LocalStack の S3 を扱う方法
 
 1. AWS CLI をインストールする
+
 2. LocalStack 用のプロファイルを作成する
   ```bash
   $ aws configure --profile localstack
-  AWS Access Key ID [None]: dummy
-  AWS Secret Access Key [None]: dummy
-  Default region name [None]: us-east-1
+  AWS Access Key ID [None]: test
+  AWS Secret Access Key [None]: test
+  Default region name [None]: ap-northeast-1
   Default output format [None]: json
-  ```
-  **※ region name は us-east-1 にすること！**
 
-3. LocalStack を立ち上げる
-  ```bash
-  $ docker-compose up -d
-  ```
-  `http://localhost:4566/health` にアクセスできればよい。
-4. S3のバケットを作成する
-  ```bash
-  $ aws --endpoint-url=http://localhost:4566 --profile localstack s3api create-bucket --bucket microposts --create-bucket-configuration LocationConstraint=ap-northeast-1
-  ```
-  以下のコマンドでバケット一覧を確認できる。
+3. S3 をコマンドで操作する
+  例えば、バケット一覧を取得する場合、以下のコマンドで取得できる。
   ```bash
   $ aws s3 ls --endpoint-url=http://localhost:4566 --profile localstack
   ```
-
-## Terraform を使った LocalStack の設定方法
-
-`main.tf` で S3 のバケット作成を行っているため、これを実行すれば上記の手順は不要である。
-
-実行方法
-```bash
-$ terraform plan
-$ terraform apply
-```
