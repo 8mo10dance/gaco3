@@ -22,6 +22,11 @@ services:
       DATA_DIR: /tmp/localstack/data
     volumes:
       - localstack:/tmp/localstack
+  terraform:
+    image: hashicorp/terraform:1.6.4
+    volumes:
+      - ./:/app
+    working_dir: /app
 
 volumes:
   bundle:
