@@ -18,8 +18,12 @@ interaction:
   rspec:
     service: app
     command: bundle exec rspec
+  tf:
+    service: terraform
 
 provision:
+  - dip tf init
+  - dip tf apply --auto-approve
   - dip bundle install
   - dip rails db:migrate
   - dip rails db:migrate RAILS_ENV=test
