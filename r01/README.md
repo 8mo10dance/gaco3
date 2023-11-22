@@ -24,3 +24,13 @@
   ```bash
   $ aws s3 ls --endpoint-url=http://localhost:4566 --profile localstack
   ```
+
+## Terraform を使った LocalStack の設定方法
+
+`main.tf` で S3 のバケット作成を行っているため、これを実行すれば上記の手順は不要である。
+
+実行方法
+```bash
+$ terraform plan
+$ terraform apply
+```
