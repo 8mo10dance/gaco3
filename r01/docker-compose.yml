@@ -19,6 +19,7 @@ services:
       - '4566:4566'
     environment:
       SERVICES: s3,lambda,iam
+      DEBUG: 1
   terraform:
     image: hashicorp/terraform:1.6.4
     volumes:
