@@ -19,4 +19,9 @@ provider "aws" {
 
 resource "aws_s3_bucket" "my-bucket" {
   bucket = "microposts"
+
+  cors_rule {
+    allowed_methods = ["PUT"]
+    allowed_origins = ["*"]
+  }
 }
