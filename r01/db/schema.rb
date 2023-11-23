@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_12_123542) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_23_083046) do
+  create_table "posts", force: :cascade do |t|
+    t.text "content", default: "", null: false
+    t.string "image", default: "", null: false
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_posts_on_user_id"
+  end
+
   create_table "user_avatars", force: :cascade do |t|
     t.integer "user_id"
     t.string "image", null: false
@@ -25,5 +34,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_12_123542) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "posts", "users"
   add_foreign_key "user_avatars", "users"
 end

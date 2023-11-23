@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_one :avatar, class_name: 'UserAvatar', dependent: :destroy
+  has_many :posts, dependent: :destroy
 
   attribute :avatar_id, :integer
 
