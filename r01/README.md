@@ -22,3 +22,10 @@ $ dip up -d
   ```bash
   $ aws s3 ls --endpoint-url=http://localhost:4566 --profile localstack
   ```
+
+## LocalStack にファイルをアップロードできたかの確認
+
+以下のコマンドでアップロードしたファイルの一覧を取得できる
+```
+$ aws s3 ls --endpoint-url=http://localhost:4566 --profile localstack s3://microposts --recursive
+```
