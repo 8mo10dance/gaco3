@@ -7,8 +7,8 @@ export default class extends Controller {
     if (!file) return
 
     try {
-      const presignedUrl = await getPresignedUrl(file)
-      const response = await uploadFile(presignedUrl, file)
+      const { url, path } = await getPresignedUrl(file)
+      const response = await uploadFile(url, file)
       if (!response.ok) throw Error('Failed to upload the file')
     } catch (err) {
       console.log(err)
@@ -22,7 +22,7 @@ async function getPresignedUrl(file) {
   if (!response.ok) throw Error('Invalid response')
 
   const data = await response.json()
-  return data.url
+  return data
 }
 
 function uploadFile(url, file) {

@@ -1,7 +1,8 @@
 class Api::V1::PresignedUrlsController < ApplicationController
   def show
-    presigned_url = get_presigned_url("#{base_dir}/#{params[:filename]}", content_type: params[:content_type])
-    render json: { url: presigned_url }
+    path = "#{base_dir}/#{params[:filename]}"
+    presigned_url = get_presigned_url(path, content_type: params[:content_type])
+    render json: { url: presigned_url, path: }
   end
 
   private
