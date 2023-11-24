@@ -17,11 +17,13 @@
   </div>
 
   <div>
-    <%= form.label :image, style: "display: block" %>
-    <%= form.file_field :image, data: { action: 'change->post-form#changeImage' } %>
+    <%= label_tag :tmp_image, '', style: "display: block" %>
+    <%= file_field_tag :tmp_image, data: { action: 'change->post-form#changeImage' } %>
   </div>
 
   <div>
+    <%= form.hidden_field :image, data: { post_form_target: 'imageName' } %>
+    <%= form.hidden_field :image_path, data: { post_form_target: 'imagePath' } %>
     <%= form.submit %>
   </div>
 <% end %>

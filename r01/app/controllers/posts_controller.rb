@@ -14,7 +14,10 @@ class PostsController < ApplicationController
     @post = @user.posts.build(post_params)
     return render :new if @post.invalid?
 
-    @post.save!
+    ApplicationRecord.transaction do
+      @post.save!
+      @post.set_image!
+    end
     redirect_to post_path(@post)
   end
 
@@ -28,7 +31,10 @@ class PostsController < ApplicationController
     @post.attributes = post_params
     return render :edit if @post.invalid?
 
-    @post.save!
+    ApplicationRecord.transaction do
+      @post.save!
+      @post.set_image!
+    end
     redirect_to post_path(@post)
   end
 
@@ -50,6 +56,6 @@ class PostsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def post_params
-      params.require(:post).permit(:content, :image)
+      params.require(:post).permit(:content, :image, :image_path)
     end
 end
