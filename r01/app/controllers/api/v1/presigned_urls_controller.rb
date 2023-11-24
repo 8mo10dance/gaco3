@@ -22,6 +22,10 @@ class Api::V1::PresignedUrlsController < ApplicationController
   end
 
   def base_dir
-    'tmp_uploads'
+    "tmp_uploads/#{uuid}"
+  end
+
+  def uuid
+    SecureRandom.uuid
   end
 end
