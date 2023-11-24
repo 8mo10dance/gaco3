@@ -9,6 +9,10 @@ class Post < ApplicationRecord
     save!
   end
 
+  def image_url
+    "http://localhost:4566/#{Settings.aws.s3.bucket}/#{carrierwave_store_dir('image')}/#{image}"
+  end
+
   private
 
   def carrierwave_store_dir(mounted_as)
