@@ -26,6 +26,10 @@ provider "aws" {
 
 resource "aws_s3_bucket" "my_bucket" {
   bucket = "microposts"
+}
+
+resource "aws_s3_bucket_cors_configuration" "my_bucket" {
+  bucket = aws_s3_bucket.my_bucket.id
 
   cors_rule {
     allowed_methods = ["PUT"]
