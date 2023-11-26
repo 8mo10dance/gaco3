@@ -17,7 +17,7 @@ provider "aws" {
   }
 }
 
-resource "aws_s3_bucket" "my-bucket" {
+resource "aws_s3_bucket" "my_bucket" {
   bucket = "microposts"
 
   cors_rule {
