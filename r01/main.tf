@@ -25,6 +25,8 @@ provider "aws" {
 
   endpoints {
     s3 = "http://localstack:4566"
+    lambda = "http://localstack:4566"
+    iam = "http://localstack:4566"
   }
 }
 
@@ -39,4 +41,35 @@ resource "aws_s3_bucket_cors_configuration" "my_bucket" {
     allowed_methods = ["PUT"]
     allowed_origins = ["*"]
   }
+}
+
+data "archive_file" "lambda_zip" {
+  type = "zip"
+  source_file = "index.py"
+  output_path = "tmp/lambda.zip"
+}
+
+resource "aws_lambda_function" "my_lambda" {
+  function_name = "my_lambda_function"
+  role = aws_iam_role.lambda_role.arn
+  handler = "index.handler"
+  runtime = "python3.7"
+  filename = data.archive_file.lambda_zip.output_path
+}
+
+resource "aws_iam_role" "lambda_role" {
+  name = "lambda_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        },
+      },
+    ],
+  })
 }
