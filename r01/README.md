@@ -29,3 +29,9 @@ $ dip up -d
 ```
 $ aws s3 ls --endpoint-url=http://localhost:4566 --profile localstack s3://microposts --recursive
 ```
+
+# Lambda の実行方法
+
+```bash
+$ aws lambda --endpoint-url=http://localhost:4566 --profile localstack invoke --function-name my_lambda_function result.log
+```
