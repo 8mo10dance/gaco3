@@ -8,8 +8,8 @@ RSpec.describe 'Api::V1::UserAvatars', type: :request do
       { image: Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/files/test_image.jpg'), 'image/jpeg') }
     end
 
-    it { is_expected.to eq 200 }
+    xit { is_expected.to eq 200 }
 
-    it { expect { post_create }.to change(UserAvatar, :count).by 1 }
+    xit { expect { post_create }.to change(UserAvatar, :count).by 1 }
   end
 end

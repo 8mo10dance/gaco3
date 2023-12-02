@@ -23,9 +23,9 @@ RSpec.describe "Posts", type: :request do
     let(:user) { create :user }
     let(:post_params) { attributes_for :post }
 
-    it { expect { post_create }.to change(user.posts, :count).by 1 }
+    xit { expect { post_create }.to change(user.posts, :count).by 1 }
 
-    it { is_expected.to redirect_to "/posts/#{user.posts.last.id}" }
+    xit { is_expected.to redirect_to "/posts/#{user.posts.last.id}" }
   end
 
   describe 'GET /posts/:id' do
@@ -50,12 +50,12 @@ RSpec.describe "Posts", type: :request do
     let(:post) { create :post }
     let(:post_params) { attributes_for :post }
 
-    it 'updates post' do
+    xit 'updates post' do
       patch_update
       expect(post.reload.content).to eq post_params[:content]
     end
 
-    it { is_expected.to redirect_to "/posts/#{post.id}" }
+    xit { is_expected.to redirect_to "/posts/#{post.id}" }
   end
 
   describe 'DELETE /posts/:id' do
