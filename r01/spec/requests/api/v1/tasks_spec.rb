@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "Api::V1::Tasks", type: :request do
-  describe "GET /api/v1/tasks" do
+RSpec.describe 'Api::V1::Tasks', type: :request do
+  describe 'GET /api/v1/tasks' do
     subject { get '/api/v1/tasks' }
 
     before { create_list :task, 3 }
@@ -9,7 +11,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
     it { is_expected.to eq 200 }
   end
 
-  describe "POST /api/v1/tasks" do
+  describe 'POST /api/v1/tasks' do
     subject(:post_create) { post '/api/v1/tasks', params: { task: task_params } }
 
     context '正常系' do
@@ -29,7 +31,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
     end
   end
 
-  describe "GET /api/v1/tasks/:id" do
+  describe 'GET /api/v1/tasks/:id' do
     subject { get "/api/v1/tasks/#{task.id}" }
 
     let(:task) { create :task }
@@ -37,7 +39,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
     it { is_expected.to eq 200 }
   end
 
-  describe "PATCH /api/v1/tasks/:id" do
+  describe 'PATCH /api/v1/tasks/:id' do
     subject(:patch_update) do
       patch "/api/v1/tasks/#{task.id}", params: { task: task_params }
     end
@@ -69,7 +71,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
     end
   end
 
-  describe "DELETE /api/v1/tasks/:id" do
+  describe 'DELETE /api/v1/tasks/:id' do
     subject(:delete_destroy) { delete "/api/v1/tasks/#{task.id}" }
 
     let(:task) { create :task }
