@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "Posts", type: :request do
+RSpec.describe 'Posts', type: :request do
   describe 'GET /users/:user_id/posts' do
     subject { get "/users/#{user.id}/posts" }
 
