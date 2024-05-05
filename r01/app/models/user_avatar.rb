@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UserAvatar < ApplicationRecord
   belongs_to :user, optional: true
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PostsController < ApplicationController
   before_action :set_user, only: %i[index new create]
   before_action :set_post, only: %i[show edit update destroy]
@@ -21,11 +23,9 @@ class PostsController < ApplicationController
     redirect_to post_path(@post)
   end
 
-  def show
-  end
+  def show; end
 
-  def edit
-  end
+  def edit; end
 
   def update
     @post.attributes = post_params
@@ -45,17 +45,18 @@ class PostsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_post
-      @post = Post.find(params[:id])
-    end
 
-    def set_user
-      @user = User.find(params[:user_id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_post
+    @post = Post.find(params[:id])
+  end
 
-    # Only allow a list of trusted parameters through.
-    def post_params
-      params.require(:post).permit(:content, :image, :image_path)
-    end
+  def set_user
+    @user = User.find(params[:user_id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def post_params
+    params.require(:post).permit(:content, :image, :image_path)
+  end
 end

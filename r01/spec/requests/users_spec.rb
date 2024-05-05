@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe 'Users', type: :request do
@@ -59,7 +61,7 @@ RSpec.describe 'Users', type: :request do
 
     before { user }
 
-    it { expect { delete_destroy }.to change(User, :count).by -1 }
+    it { expect { delete_destroy }.to change(User, :count).by(-1) }
 
     it { is_expected.to redirect_to '/users' }
   end
