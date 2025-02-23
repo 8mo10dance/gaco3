@@ -1,0 +1,30 @@
+name: r01
+
+on:
+  push:
+    paths:
+      - '.github/workflows/r01.yml'
+      - 'r01/**/*'
+
+jobs:
+  rspec:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: r01
+    env:
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.0
+      - name: Install required gems
+        run: |
+          gem install bundler:2.4.1
+          bundle install --jobs 4 --retry 3
+      - name: Migrate DB
+        run: RAILS_ENV=test bundle exec rake db:migrate
+      - name: Run RSpec
+        run: bundle exec rspec
