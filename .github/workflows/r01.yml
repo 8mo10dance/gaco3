@@ -10,12 +10,14 @@ defaults:
   run:
     working-directory: r01
 
+env:
+  RAILS_ENV: test
+  AWS_ACCESS_KEY_ID: dummy
+  AWS_SECRET_ACCESS_KEY: dummy
+
 jobs:
   rspec:
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: dummy
-      AWS_SECRET_ACCESS_KEY: dummy
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -26,6 +28,6 @@ jobs:
           gem install bundler:2.4.1
           bundle install --jobs 4 --retry 3
       - name: Migrate DB
-        run: RAILS_ENV=test bundle exec rake db:migrate
+        run: bundle exec rake db:migrate
       - name: Run RSpec
         run: bundle exec rspec
