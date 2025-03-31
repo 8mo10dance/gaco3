@@ -1,0 +1,6 @@
+services:
+  app:
+    build: .
+    image: app:0.0.1
+    volumes:
+      - ./:/app

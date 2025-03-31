@@ -1,0 +1,12 @@
+version: '8.0'
+
+interaction:
+  bash:
+    service: app
+    command: /bin/bash
+  make:
+    service: app
+    command: make
+  exe:
+    service: app
+    command: ./app
