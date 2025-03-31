@@ -6,12 +6,13 @@ on:
       - '.github/workflows/r01.yml'
       - 'r01/**/*'
 
+defaults:
+  run:
+    working-directory: r01
+
 jobs:
   rspec:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: r01
     env:
       AWS_ACCESS_KEY_ID: dummy
       AWS_SECRET_ACCESS_KEY: dummy
