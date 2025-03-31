@@ -2,13 +2,13 @@ version: '4'
 
 interaction:
   bash:
-    service: app
+    service: rails
     command: bash
   bundle:
-    service: app
+    service: rails
     command: bundle
   rails:
-    service: app
+    service: rails
     command: bundle exec rails
     subcommands:
       s:
@@ -16,7 +16,7 @@ interaction:
         compose:
           run_options: [service-ports]
   rspec:
-    service: app
+    service: rails
     command: bundle exec rspec
 
 provision:
