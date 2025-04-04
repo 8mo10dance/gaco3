@@ -1,18 +1,15 @@
-version: '3.7'
-
 services:
-  app:
-    image: ruby:3.2.0
-    working_dir: /app
+  rails:
+    build: .
+    image: r01-rails:1.0.0
     volumes:
-      - ${PWD}:/app
+      - ${PWD}:/rails
       - bundle:/usr/local/bundle
     ports:
       - '3000:3000'
     environment:
       AWS_ACCESS_KEY_ID: dummy
       AWS_SECRET_ACCESS_KEY: dummy
-    command: bundle exec rails s -b 0.0.0.0
   localstack:
     image: localstack/localstack:2.3.2
     ports:
