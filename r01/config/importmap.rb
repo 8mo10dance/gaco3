@@ -7,7 +7,6 @@ pin '@hotwired/turbo-rails', to: 'turbo.min.js', preload: true
 pin '@hotwired/stimulus', to: 'stimulus.min.js', preload: true
 pin '@hotwired/stimulus-loading', to: 'stimulus-loading.js', preload: true
 pin_all_from 'app/javascript/controllers', under: 'controllers'
-pin 'alpinejs', to: 'https://ga.jspm.io/npm:alpinejs@3.13.2/dist/module.esm.js'
 pin 'qs', to: 'https://ga.jspm.io/npm:qs@6.11.2/lib/index.js'
 pin '#util.inspect.js', to: 'https://ga.jspm.io/npm:@jspm/core@2.0.1/nodelibs/@empty.js'
 pin 'call-bind/callBound', to: 'https://ga.jspm.io/npm:call-bind@1.0.5/callBound.js'
