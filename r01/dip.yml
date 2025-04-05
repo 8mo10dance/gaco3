@@ -18,6 +18,9 @@ interaction:
   rspec:
     service: rails
     command: bundle exec rspec
+  importmap:
+    service: rails
+    command: bin/importmap
 
 provision:
   - dip bundle install
