@@ -11,14 +11,73 @@
    rails _7.2.0_ new backend --skip-javascript --skip-test
    ```
 3. **フロントエンド初期化 (frontend)**
-   ```bash
-   mkdir frontend && cd frontend
-   npm init -y
-   npm install --save-dev @rspack/cli @rspack/core @babel/core @babel/preset-env @babel/preset-typescript @babel/preset-react typescript react react-dom style-loader css-loader @types/react @types/react-dom
-   cd ..
-   ```
+    ```bash
+    mkdir frontend && cd frontend
+    npm init -y
+    npm install --save-dev @rspack/cli @rspack/core @babel/core @babel/preset-env @babel/preset-typescript @babel/preset-react typescript react react-dom style-loader css-loader babel-loader @types/react @types/react-dom
+    cd ..
+    ```
+
+    package.json に build スクリプトを追加
+    ```json
+    {
+      "scripts": {
+        "build": "rspack --config rspack.config.js"
+      }
+    }
+    ```
+
 4. **設定ファイル作成**
-   - `frontend/tsconfig.json`, `.babelrc`, `rspack.config.js` を後述の内容で作成
+
+    **.babelrc**
+
+    ```json
+    {
+      "presets": [
+        ["@babel/preset-env", { "targets": { "browsers": "last 2 versions" } }],
+        "@babel/preset-typescript",
+        "@babel/preset-react"
+      ]
+    }
+    ```
+
+    **tsconfig.json**
+
+    ```json
+    {
+      "compilerOptions": {
+        "target": "ES6",
+        "module": "ESNext",
+        "jsx": "react-jsx",
+        "strict": true,
+        "moduleResolution": "node"
+      },
+      "include": ["src"]
+    }
+    ```
+
+    **rspack.config.js**
+
+    ```javascript
+    const path = require('path');
+    module.exports = {
+      entry: './frontend/src/index.js',
+      output: {
+        path: path.resolve(__dirname, 'public', 'packs'),
+        filename: 'bundle.js',
+        publicPath: '/packs/'
+      },
+      module: {
+        rules: [
+          { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+          { test: /\.(png|jpg|gif)$/, type: 'asset/resource' },
+          { test: /\.(ts|tsx)$/, use: 'babel-loader' }
+        ]
+      },
+      resolve: { extensions: ['.js', '.ts', '.tsx'] }
+    };
+    ```
+
 5. **Docker 環境構築**
    ```bash
    touch Dockerfile docker-compose.yml
@@ -194,33 +253,6 @@ Rails のレイアウトに以下を追加:
 ---
 
 ### 6. ステップ 3: トランスパイル(Typescript + Babel)
-
-**.babelrc**
-
-```json
-{
-  "presets": [
-    ["@babel/preset-env", { "targets": { "browsers": "last 2 versions" } }],
-    "@babel/preset-typescript",
-    "@babel/preset-react"
-  ]
-}
-```
-
-**tsconfig.json**
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES6",
-    "module": "ESNext",
-    "jsx": "react-jsx",
-    "strict": true,
-    "moduleResolution": "node"
-  },
-  "include": ["frontend/src"]
-}
-```
 
 #### (a) TypeScript の例
 
