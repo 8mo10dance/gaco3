@@ -8,7 +8,7 @@
    ```
 2. **Rails アプリ初期化 (backend)**
    ```bash
-   rails _7.2.0_ new backend --skip-javascript
+   rails _7.2.0_ new backend --skip-javascript --skip-test
    ```
 3. **フロントエンド初期化 (frontend)**
    ```bash
