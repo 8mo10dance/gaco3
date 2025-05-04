@@ -11,12 +11,22 @@
    rails _7.2.0_ new backend --skip-javascript --skip-test
    ```
 3. **フロントエンド初期化 (frontend)**
-   ```bash
-   mkdir frontend && cd frontend
-   npm init -y
-   npm install --save-dev @rspack/cli @rspack/core @babel/core @babel/preset-env @babel/preset-typescript @babel/preset-react typescript react react-dom style-loader css-loader babel-loader @types/react @types/react-dom
-   cd ..
-   ```
+    ```bash
+    mkdir frontend && cd frontend
+    npm init -y
+    npm install --save-dev @rspack/cli @rspack/core @babel/core @babel/preset-env @babel/preset-typescript @babel/preset-react typescript react react-dom style-loader css-loader babel-loader @types/react @types/react-dom
+    cd ..
+    ```
+
+    package.json に build スクリプトを追加
+    ```json
+    {
+      "scripts": {
+        "build": "rspack --config rspack.config.js"
+      }
+    }
+    ```
+
 4. **設定ファイル作成**
 
     **.babelrc**
