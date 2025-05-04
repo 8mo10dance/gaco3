@@ -79,10 +79,40 @@
     ```
 
 5. **Docker 環境構築**
-   ```bash
-   touch Dockerfile docker-compose.yml
-   ```
-   - プロジェクトルートに `Dockerfile` と `docker-compose.yml` のテンプレートを配置
+
+    **Dockerfile (ubuntu:latest + Rails + Node)**
+
+    ```dockerfile
+    FROM ubuntu:latest
+
+    RUN apt-get update && \
+        apt-get install -y curl gnupg2 build-essential libpq-dev libssl-dev libreadline-dev zlib1g-dev nodejs npm ruby-dev libyaml-dev
+
+    WORKDIR /myapp/backend
+    COPY backend/Gemfile backend/Gemfile.lock ./
+    RUN gem install bundler && \
+        bundle install
+
+    EXPOSE 3000
+
+    CMD bash -c "rm -f tmp/pids/server.pid && bin/rails s -b 0.0.0.0"
+    ```
+
+    **docker-compose.yml**
+
+    ```yaml
+    version: '3.8'
+    services:
+      web:
+        build: .
+        working_dir: /myapp
+        ports:
+          - "3000:3000"
+        volumes:
+          - ./backend:/myapp/backend
+          - ./frontend:/myapp/frontend
+    ```
+
 6. **ディレクトリ構成確認**
    ```text
    myapp/
@@ -139,51 +169,6 @@ myapp/
         ├── styles.css
         └── logo.png
 ```
-
----
-
-### 3. Docker 環境構築
-
-**Dockerfile (ubuntu:latest + Rails + Node)**
-
-```dockerfile
-FROM ubuntu:latest
-RUN apt-get update && \
-    apt-get install -y curl gnupg2 build-essential libpq-dev nodejs npm && gem install rails -v 7.2.0
-WORKDIR /myapp
-
-# Backend (Rails)
-COPY backend/Gemfile* backend/
-RUN bundle install --gemfile=backend/Gemfile
-
-# Frontend (Rspack)
-COPY frontend/package.json frontend/.babelrc frontend/tsconfig.json frontend/rspack.config.js frontend/
-RUN npm install --prefix frontend
-# Rspack でビルド (ステージング・本番向け)
-RUN npm run build --prefix frontend
-
-# 残りのソースコピー
-COPY . .
-
-# DB 作成・マイグレーション・サーバ起動
-CMD ["bash", "-lc", "cd backend && rails db:create db:migrate && rails server -b 0.0.0.0"]
-```
-
-**docker-compose.yml**
-
-```yaml
-version: '3.8'
-services:
-  web:
-    build: .
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./backend:/myapp/backend
-      - ./frontend:/myapp/frontend
-```
-
----
 
 ### 4. ステップ 1: Sprockets でのバニラ JS
 

@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    working_dir: /myapp
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/myapp/backend
+      - ./frontend:/myapp/frontend
