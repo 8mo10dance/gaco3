@@ -61,7 +61,7 @@
     ```javascript
     const path = require('path');
     module.exports = {
-      entry: './frontend/src/index.js',
+      entry: path.resolve(__dirname, 'src/index.tsx'),
       output: {
         path: path.resolve(__dirname, 'public', 'packs'),
         filename: 'bundle.js',
