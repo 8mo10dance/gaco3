@@ -2,9 +2,8 @@ const path = require('path');
 module.exports = {
   entry: path.resolve(__dirname, 'src/index.tsx'),
   output: {
-    path: path.resolve(__dirname, 'public', 'packs'),
+    path: path.resolve(__dirname, '../backend/app/assets/javascripts'),
     filename: 'bundle.js',
-    publicPath: '/packs/'
   },
   module: {
     rules: [

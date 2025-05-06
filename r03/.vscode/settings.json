@@ -1,0 +1,5 @@
+{
+    "files.trimTrailingWhitespace": true,
+    "files.trimFinalNewlines": true,         // 最後の改行も削除したい場合
+    "files.insertFinalNewline": true         // 逆に最後の改行を必ず入れたい場合は true
+}
