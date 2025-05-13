@@ -13,7 +13,7 @@ Webpacker は使わない。それ以外はデフォルトの設定を使う。
     ```yaml
     services:
       ruby:
-        image: ruby:2.7.5
+        image: ruby:2.7.8
         working_dir: /ruby
         volumes:
           - .:/ruby
@@ -59,7 +59,7 @@ Webpacker は使わない。それ以外はデフォルトの設定を使う。
 4. Rails アプリケーション用の Docker 環境を作成する
     
     ```docker
-    FROM ruby:2.7.5
+    FROM ruby:2.7.8
     
     WORKDIR /rails
     
