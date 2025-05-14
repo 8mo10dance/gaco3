@@ -15,3 +15,5 @@ interaction:
 
 provision:
   - dip bundle install
+  - dip rails db:migrate
+  - dip rails db:migrate RAILS_ENV=test
