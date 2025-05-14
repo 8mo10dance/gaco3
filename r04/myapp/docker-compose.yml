@@ -1,0 +1,14 @@
+services:
+  rails:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: myapp:2.0.0
+    volumes:
+      - .:/rails
+      - bundle:/usr/local/bundle
+    ports:
+      - "3000:3000"
+
+volumes:
+  bundle:
