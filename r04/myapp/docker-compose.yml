@@ -1,0 +1,13 @@
+services:
+  rails:
+    build:
+      context: .
+    image: myapp:1.0.0
+    volumes:
+      - .:/rails
+      - bundle_rails61:/usr/local/bundle
+    ports:
+      - "3000:3000"
+
+volumes:
+  bundle_rails61:
