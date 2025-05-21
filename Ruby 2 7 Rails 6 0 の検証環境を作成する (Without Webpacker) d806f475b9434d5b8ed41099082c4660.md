@@ -21,6 +21,12 @@ Webpacker は使わない。それ以外はデフォルトの設定を使う。
    git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
    gem "rails", "~> 6.0.0"
+
+   # bundle install するときに
+   # `uninitialized constant ActiveSupport::LoggerThreadSafeLevel::Logger`
+   # のエラーが出るため
+   # See: https://zenn.dev/84san/scraps/0f612b92969e99
+   gem "concurrent-ruby", "1.3.4"
    ```
 
 2. Rails アプリケーション作成
@@ -30,6 +36,9 @@ Webpacker は使わない。それ以外はデフォルトの設定を使う。
    ffi のエラーが出るかもしれないが、Rails アプリケーション自体は作られているので、問題はない。
 
    なお、ここでは Webpacker は使わない想定なので `--skip-webpack-install` しているが、なぜか Gemfile には webpacker が入っている。不要＆ Rails 立ち上げ時にエラーになるので、消しておく。
+
+   また、concurrent-ruby のバージョンを `1.3.4` に固定する必要がある。
+   詳細は https://zenn.dev/84san/scraps/0f612b92969e99 を参照のこと。
 
 3. Rails アプリケーション用の Docker 環境を作成する
 
