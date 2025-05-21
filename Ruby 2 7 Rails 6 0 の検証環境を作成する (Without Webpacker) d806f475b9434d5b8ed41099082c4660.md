@@ -21,6 +21,13 @@ Webpacker は使わない。それ以外はデフォルトの設定を使う。
    git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
    gem "rails", "~> 6.0.0"
+
+   # bundle install するときに
+   # `uninitialized constant ActiveSupport::LoggerThreadSafeLevel::Logger`
+   # のエラーが出るため
+   # Rails 7.1 以降は直っているらしい
+   # See: https://zenn.dev/84san/scraps/0f612b92969e99
+   gem "concurrent-ruby", "1.3.4"
    ```
 
 2. Rails アプリケーション作成
