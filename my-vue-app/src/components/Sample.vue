@@ -1,5 +1,6 @@
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref } from 'vue'
+import Counter from './Counter.vue'
 
 export default {
   name: 'Sample',
@@ -14,15 +15,10 @@ export default {
     const addItem = () => {
       items.value.push(items.value.length + 1);
     };
-    const count = ref(0);
-    const increment = () => {
-      count.value++;
-    };
-    watch(count, (newVal, oldVal) => {
-      console.log(`Count changed from ${oldVal} to ${newVal}`);
-    });
-    const doubleCount = computed(() => count.value * 2);
-    return { items, addItem, count, doubleCount, increment };
+    return { items, addItem }
+  },
+  components: {
+    Counter
   }
 };
 </script>
@@ -32,13 +28,8 @@ export default {
     <h2>{{ name }}</h2>
     <ul>
       <li v-for="item in items" :key="item">
-        {{ item }}
+        <Counter />
       </li>
     </ul>
-    <button @click="addItem">Add Item</button>
-    <input type="number" v-model="count" placeholder="Type a number" />
-    <button @click="increment">Count is: {{ count }}</button>
-    <p>{{ doubleCount }}</p>
-    <p>Edit this component to test HMR</p>
   </div>
 </template>
