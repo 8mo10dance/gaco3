@@ -20,6 +20,12 @@ export default {
 <template>
   <div>
     <h1>Sample Component</h1>
+    <ul>
+      <li v-for="item in ['Item 1', 'Item 2', 'Item 3']" :key="item">
+        {{ item }}
+      </li>
+    </ul>
+    <input type="number" v-model="count" placeholder="Type a number" />
     <button @click="increment">Count is: {{ count }}</button>
     <p>{{ doubleCount }}</p>
     <p>Edit this component to test HMR</p>
