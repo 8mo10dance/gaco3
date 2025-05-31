@@ -12,7 +12,7 @@ export default {
       console.log(`Count changed from ${oldVal} to ${newVal}`);
     });
     const doubleCount = computed(() => count.value * 2);
-    return { count, doubleCount, increment };
+    return { items: [1,2,3], count, doubleCount, increment };
   }
 };
 </script>
@@ -21,7 +21,7 @@ export default {
   <div>
     <h1>Sample Component</h1>
     <ul>
-      <li v-for="item in ['Item 1', 'Item 2', 'Item 3']" :key="item">
+      <li v-for="item in items" :key="item">
         {{ item }}
       </li>
     </ul>
