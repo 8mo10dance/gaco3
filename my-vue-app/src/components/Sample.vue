@@ -3,6 +3,12 @@ import { ref, computed, watch } from 'vue'
 
 export default {
   name: 'Sample',
+  props: {
+    name: {
+      type: String,
+      default: 'defaultName'
+    }
+  },
   setup() {
     const items = ref([1, 2, 3]);
     const addItem = () => {
@@ -23,7 +29,7 @@ export default {
 
 <template>
   <div>
-    <h1>Sample Component</h1>
+    <h2>{{ name }}</h2>
     <ul>
       <li v-for="item in items" :key="item">
         {{ item }}

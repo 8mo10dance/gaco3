@@ -13,7 +13,7 @@ import Sample from './components/Sample.vue'
     </a>
   </div>
   <HelloWorld msg="Vite + Vue" />
-  <Sample />
+  <Sample name="hoge" />
 </template>
 
 <style scoped>
