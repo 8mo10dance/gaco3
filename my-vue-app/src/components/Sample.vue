@@ -1,5 +1,5 @@
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 export default {
   name: 'Sample',
@@ -8,6 +8,9 @@ export default {
     const increment = () => {
       count.value++;
     };
+    watch(count, (newVal, oldVal) => {
+      console.log(`Count changed from ${oldVal} to ${newVal}`);
+    });
     const doubleCount = computed(() => count.value * 2);
     return { count, doubleCount, increment };
   }
