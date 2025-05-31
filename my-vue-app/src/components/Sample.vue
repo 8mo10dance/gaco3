@@ -4,6 +4,10 @@ import { ref, computed, watch } from 'vue'
 export default {
   name: 'Sample',
   setup() {
+    const items = ref([1, 2, 3]);
+    const addItem = () => {
+      items.value.push(items.value.length + 1);
+    };
     const count = ref(0);
     const increment = () => {
       count.value++;
@@ -12,7 +16,7 @@ export default {
       console.log(`Count changed from ${oldVal} to ${newVal}`);
     });
     const doubleCount = computed(() => count.value * 2);
-    return { items: [1,2,3], count, doubleCount, increment };
+    return { items, addItem, count, doubleCount, increment };
   }
 };
 </script>
@@ -25,6 +29,7 @@ export default {
         {{ item }}
       </li>
     </ul>
+    <button @click="addItem">Add Item</button>
     <input type="number" v-model="count" placeholder="Type a number" />
     <button @click="increment">Count is: {{ count }}</button>
     <p>{{ doubleCount }}</p>
