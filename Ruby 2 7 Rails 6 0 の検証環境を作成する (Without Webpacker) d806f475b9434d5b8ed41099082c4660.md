@@ -31,11 +31,9 @@ Webpacker は使わない。それ以外はデフォルトの設定を使う。
 
 2. Rails アプリケーション作成
 
-   `docker compose run --rm ruby bash` して Docker コンテナに入り、 `rails new myapp --skip-webpack-install` する。
+   `docker compose run --rm ruby bash` して Docker コンテナに入り、 `rails new myapp --skip-javascript` する。
 
    ffi のエラーが出るかもしれないが、Rails アプリケーション自体は作られているので、問題はない。
-
-   なお、ここでは Webpacker は使わない想定なので `--skip-webpack-install` しているが、なぜか Gemfile には webpacker が入っている。不要＆ Rails 立ち上げ時にエラーになるので、消しておく。
 
    また、concurrent-ruby のバージョンを `1.3.4` に固定する必要がある。
    詳細は https://zenn.dev/84san/scraps/0f612b92969e99 を参照のこと。
