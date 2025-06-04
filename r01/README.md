@@ -1,7 +1,7 @@
 # r01の動かし方
 
 ```bash
-$ dip provison
+$ dip provision
 $ dip up -d
 ```
 
