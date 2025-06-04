@@ -31,11 +31,9 @@ Webpacker は使わない。それ以外はデフォルトの設定を使う。
 
 2. Rails アプリケーション作成
 
-   `docker compose run --rm ruby bash` して Docker コンテナに入り、 `rails new myapp --skip-webpack-install` する。
+   `docker compose run --rm ruby bash` して Docker コンテナに入り、 `rails new myapp --skip-javascript` する。
 
    ffi のエラーが出るかもしれないが、Rails アプリケーション自体は作られているので、問題はない。
-
-   なお、ここでは Webpacker は使わない想定なので `--skip-webpack-install` しているが、なぜか Gemfile には webpacker が入っている。不要＆ Rails 立ち上げ時にエラーになるので、消しておく。
 
    また、concurrent-ruby のバージョンを `1.3.4` に固定する必要がある。
    詳細は https://zenn.dev/84san/scraps/0f612b92969e99 を参照のこと。
@@ -91,45 +89,3 @@ Webpacker は使わない。それ以外はデフォルトの設定を使う。
    ```
 
    `dip provision` して `dip up` すると Rails が立ち上がる。
-
-4. Webpacker を使わずに JavaScript を読み込む
-
-   デフォルトでは Webpacker でビルドした JavaScript ファイルを読み込むようになっている。これを Webpacker を使わない形に変更する。
-
-   まず、レイアウトの `app/views/layouts/application.html.erb` の `javascript_pack_tag` の部分を書き換える。
-
-   ```html
-   <!DOCTYPE html>
-   <html>
-     <head>
-       <title>R01</title>
-       <%= csrf_meta_tags %> <%= csp_meta_tag %> <%= stylesheet_link_tag
-       'application', media: 'all', 'data-turbolinks-track': 'reload' %> <#%=
-       javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
-       <%= javascript_include_tag 'application', 'data-turbolinks-track':
-       'reload' %>
-     </head>
-
-     <body>
-       <%= yield %>
-     </body>
-   </html>
-   ```
-
-   JavaScript ファイルを以下の内容で作成する。
-
-   ```jsx
-   document.addEventListener("DOMContentLoaded", () => {
-     console.log("hoge");
-   });
-   ```
-
-   これだけだと `assets/javascripts` 下のファイルがプリコンパイル対象になっていないため、プリコンパイル対象に追加する。
-
-   ```jsx
-   //= link_tree ../images
-   //= link_tree ../javascripts .js
-   //= link_directory ../stylesheets .css
-   ```
-
-   link_directory だと javascripts 直下のファイルしかプリコンパイル対象にならないので、再帰的にすべてのファイルをプリコンパイル対象にするように link_tree を使う。

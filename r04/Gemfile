@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+gem "rails", "~> 6.0.0"
+
+# bundle install するときに
+# `uninitialized constant ActiveSupport::LoggerThreadSafeLevel::Logger`
+# のエラーが出るため
+# See: https://zenn.dev/84san/scraps/0f612b92969e99
+gem "concurrent-ruby", "1.3.4"
