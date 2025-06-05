@@ -89,3 +89,19 @@ Webpacker は使わない。また minitest ではなく rspec を使う。
    ```
 
    `dip provision` して `dip up` すると Rails が立ち上がる。
+
+4. RSpec をインストールする
+
+```ruby
+# Gemfile
+group :development, :test do
+  gem "rspec-rails"
+end
+```
+
+以下を実行する。
+
+```bash
+dip bundle install
+dip rails g rspec:install
+```
