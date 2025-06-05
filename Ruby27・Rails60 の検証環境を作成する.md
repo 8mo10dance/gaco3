@@ -1,8 +1,8 @@
-# Ruby 2.7 / Rails 6.0 の検証環境を作成する (Without Webpacker)
+# Ruby 2.7 / Rails 6.0 の検証環境を作成する
 
 Ruby 2.7 / Rails 6.0 の検証環境を作成する。
 
-Webpacker は使わない。それ以外はデフォルトの設定を使う。
+Webpacker は使わない。また minitest ではなく rspec を使う。
 
 1. Rails アプリケーション作成用の Docker 環境を作る
 
@@ -31,7 +31,7 @@ Webpacker は使わない。それ以外はデフォルトの設定を使う。
 
 2. Rails アプリケーション作成
 
-   `docker compose run --rm ruby bash` して Docker コンテナに入り、 `rails new myapp --skip-javascript` する。
+   `docker compose run --rm ruby bash` して Docker コンテナに入り、 `rails new myapp --skip-javascript --skip-test` する。
 
    ffi のエラーが出るかもしれないが、Rails アプリケーション自体は作られているので、問題はない。
 
