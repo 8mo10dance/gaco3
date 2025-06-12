@@ -1,7 +1,7 @@
 services:
   rails:
     build: .
-    image: r01-rails:1.0.0
+    image: r01-rails:1.1.0
     volumes:
       - ${PWD}:/rails
       - bundle:/usr/local/bundle
