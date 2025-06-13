@@ -11,6 +11,8 @@ services:
       - bundle_rails60:/usr/local/bundle
     ports:
       - "3000:3000"
+    extra_hosts:
+      - 'localhost.localstack.cloud:host-gateway'
   localstack:
     image: localstack/localstack:4.0
     ports:
