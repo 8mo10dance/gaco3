@@ -2,8 +2,8 @@ services:
   rails:
     build:
       context: .
-      dockerfile: Dockerfile.dev
-    image: myapp:1.0.0
+      dockerfile: Dockerfile
+    image: myapp:1.0.1
     tty: true
     stdin_open: true
     volumes:
