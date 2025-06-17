@@ -3,8 +3,13 @@ module Form
     include ActiveModel::Model
     include ActiveModel::Attributes
     include ActiveModel::Validations
+    extend CarrierWave::Mount
 
-    attr_accessor :name, :avatar
+    attr_accessor :name
+
+    attribute :avatar
+
+    mount_uploader :avatar, AvatarUploader
 
     def initialize(user = User.new, **attributes)
       @user = user
