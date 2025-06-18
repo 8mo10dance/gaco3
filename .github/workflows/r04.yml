@@ -1,0 +1,29 @@
+name: r04
+
+on:
+  push:
+    paths:
+      - '.github/workflows/r04.yml'
+      - 'r04/myapp/**/*'
+
+defaults:
+  run:
+    working-directory: r04/myapp
+
+env:
+  RAILS_ENV: test
+
+jobs:
+  rspec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.8
+          bundler-cache: true
+      - name: Migrate DB
+        run: bundle exec rake db:migrate
+      - name: Run RSpec
+        run: bundle exec rspec
