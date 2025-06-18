@@ -11,6 +11,17 @@ services:
       - bundle_rails60:/usr/local/bundle
     ports:
       - "3000:3000"
+    extra_hosts:
+      - 'localhost.localstack.cloud:host-gateway'
+  localstack:
+    image: localstack/localstack:4.0
+    ports:
+      - "4566:4566"
+    environment:
+      DOCKER_SOCK: /var/run/docker.sock
+      DEBUG: 1
+    volumes:
+      - ./localstack/init:/etc/localstack/init
 
 volumes:
   bundle_rails60:
