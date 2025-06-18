@@ -61,6 +61,8 @@ services:
     build:
       context: .
     image: myapp:1.0.0
+    tty: true
+    stdin_open: true
     volumes:
       - .:/rails
       - bundle:/usr/local/bundle
