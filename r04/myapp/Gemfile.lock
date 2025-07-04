@@ -246,6 +246,7 @@ GEM
 
 PLATFORMS
   aarch64-linux
+  x86_64-linux
 
 DEPENDENCIES
   aws-sdk-s3 (~> 1.189)
@@ -270,4 +271,4 @@ RUBY VERSION
    ruby 2.7.8p225
 
 BUNDLED WITH
-   2.4.22
+   2.4.19
