@@ -21,22 +21,27 @@ docker compose build
 ```
 
 Ensure you have a `.env` file in the project root with your API key:
+This project uses Docker Compose to manage two separate services:
+- `app`: Runs `node index.js` to fetch data from the YouTube API.
+- `formatter`: Runs `format.sh` to process the output from the `app` service.
+
+First, ensure you have a `.env` file in the project root with your API key:
 
 ```
 YOUTUBE_API_KEY=YOUR_API_KEY
 ```
 
-Then, you can build and run the service using Docker Compose:
+To run the `app` service and pipe its output to the `formatter` service:
 
 ```bash
-docker-compose up
+docker-compose run --rm app | docker-compose run --rm -T formatter
 ```
 
-To run the service and pipe its output to `format.sh` (this will run the `app` service once and remove the container):
-
-```bash
-docker-compose run --rm app node index.js | ./format.sh
-```
+This command will:
+1. Run the `app` service (defined by `Dockerfile.app`).
+2. Pipe its standard output to the standard input of the `formatter` service.
+3. Run the `formatter` service (defined by `Dockerfile.formatter`).
+4. Remove both containers after execution (`--rm`).
 
 ## Dependencies
 
