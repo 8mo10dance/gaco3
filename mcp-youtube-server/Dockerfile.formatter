@@ -1,0 +1,17 @@
+# Use a minimal Alpine Linux image
+FROM alpine:latest
+
+# Install bash and jq
+RUN apk add --no-cache bash jq
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the format.sh script
+COPY format.sh .
+
+# Make the script executable
+RUN chmod +x format.sh
+
+# Command to run the formatter
+CMD ["./format.sh"]
