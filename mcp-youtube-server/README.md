@@ -14,19 +14,29 @@ npm install
 
 ## Usage
 
-To start the server, run:
+First, build the Docker image:
 
 ```bash
-node index.js
+docker compose build
 ```
 
-To run the server and format the output using `format.sh`:
+Ensure you have a `.env` file in the project root with your API key:
+
+```
+YOUTUBE_API_KEY=YOUR_API_KEY
+```
+
+Then, you can build and run the service using Docker Compose:
 
 ```bash
-YOUTUBE_API_KEY=YOUR_API_KEY node index.js | ./format.sh
+docker-compose up
 ```
 
-Replace `YOUR_API_KEY` with your actual YouTube Data API key.
+To run the service and pipe its output to `format.sh` (this will run the `app` service once and remove the container):
+
+```bash
+docker-compose run --rm app node index.js | ./format.sh
+```
 
 ## Dependencies
 
