@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "Demo-HTTP-MCP-Server": {
+      "command": "node",
+      "args": [
+        "./add.mjs"
+      ]
+    }
+  }
+}
