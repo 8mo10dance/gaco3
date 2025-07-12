@@ -3,6 +3,7 @@
 module Api
   module V1
     class TasksController < ApplicationController
+      skip_before_action :verify_authenticity_token
       def index
         @tasks = Task.all
       end
