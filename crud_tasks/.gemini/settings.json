@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "Task MCP": {
+      "command": "node",
+      "args": [
+        "./index.mjs"
+      ]
+    }
+  }
+}
