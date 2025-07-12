@@ -1,19 +1,9 @@
-const BASE_URL = 'http://localhost:3000/api/v1/tasks';
+import { getList, getItem, createItem, updateItem, deleteItem } from "./api/tasks.mjs"
 
-async function handleResponse(response) {
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || JSON.stringify(errorData)}`);
-  }
-  return response.json();
-}
-
-// GET all tasks
 async function getTasks() {
   try {
-    const response = await fetch(BASE_URL);
     console.log('Fetching all tasks...');
-    const tasks = await handleResponse(response);
+    const tasks = await getList()
     console.log('All tasks:', tasks);
     return tasks;
   } catch (error) {
@@ -21,12 +11,10 @@ async function getTasks() {
   }
 }
 
-// GET a single task by ID
 async function getTask(id) {
   try {
-    const response = await fetch(`${BASE_URL}/${id}`);
     console.log(`Fetching task with ID: ${id}...`);
-    const task = await handleResponse(response);
+    const task = await getItem(id)
     console.log(`Task with ID ${id}:`, task);
     return task;
   } catch (error) {
@@ -34,18 +22,10 @@ async function getTask(id) {
   }
 }
 
-// POST a new task
 async function createTask(taskData) {
   try {
-    const response = await fetch(BASE_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(taskData),
-    });
     console.log('Creating new task with data:', taskData);
-    const newTask = await handleResponse(response);
+    const newTask = await createItem(taskData)
     console.log('New task created:', newTask);
     return newTask;
   } catch (error) {
@@ -53,18 +33,10 @@ async function createTask(taskData) {
   }
 }
 
-// PUT/PATCH to update an existing task
 async function updateTask(id, taskData) {
   try {
-    const response = await fetch(`${BASE_URL}/${id}`, {
-      method: 'PATCH', // Or 'PUT' depending on API preference for full replacement vs partial update
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(taskData),
-    });
     console.log(`Updating task with ID: ${id} with data:`, taskData);
-    const updatedTask = await handleResponse(response);
+    const updatedTask = await updateItem(id, taskData)
     console.log(`Task with ID ${id} updated:`, updatedTask);
     return updatedTask;
   } catch (error) {
@@ -72,18 +44,12 @@ async function updateTask(id, taskData) {
   }
 }
 
-// DELETE a task
 async function deleteTask(id) {
   try {
-    const response = await fetch(`${BASE_URL}/${id}`, {
-      method: 'DELETE',
-    });
     console.log(`Deleting task with ID: ${id}...`);
-    if (response.status === 204) { // No Content for successful deletion
-      console.log(`Task with ID ${id} deleted successfully.`);
-      return true;
-    }
-    await handleResponse(response); // Still try to parse if there's content for error
+    await deleteItem(id)
+    console.log(`Task with ID ${id} deleted successfully.`);
+    return true
   } catch (error) {
     console.error(`Error deleting task with ID ${id}:`, error);
     return false;
