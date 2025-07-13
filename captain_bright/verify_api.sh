@@ -3,11 +3,6 @@
 set -e
 
 RAILS_PORT=3000
-RAILS_PID_FILE="tmp/pids/server.pid"
-
-echo "Starting Rails server..."
-bundle exec rails s -p $RAILS_PORT &
-RAILS_SERVER_PID=$!
 
 echo "Waiting for Rails server to start..."
 for i in $(seq 1 10); do
@@ -21,7 +16,6 @@ done
 
 if ! curl -s http://localhost:$RAILS_PORT/up > /dev/null; then
   echo "Error: Rails server did not start within the expected time."
-  kill $RAILS_SERVER_PID || true
   exit 1
 fi
 
@@ -35,7 +29,6 @@ EMOJI_ID=$(echo $CREATE_EMOJI_RESPONSE | jq -r '.id')
 
 if [ -z "$EMOJI_ID" ] || [ "$EMOJI_ID" == "null" ]; then
   echo "Error: Failed to create emoji or get ID."
-  kill $RAILS_SERVER_PID || true
   exit 1
 fi
 echo "Created Emoji with ID: $EMOJI_ID"
@@ -67,7 +60,6 @@ TAG_ID=$(echo $CREATE_TAG_RESPONSE | jq -r '.id')
 
 if [ -z "$TAG_ID" ] || [ "$TAG_ID" == "null" ]; then
   echo "Error: Failed to create tag or get ID."
-  kill $RAILS_SERVER_PID || true
   exit 1
 fi
 echo "Created Tag with ID: $TAG_ID"
@@ -88,10 +80,5 @@ curl -s -X PATCH -H "Content-Type: application/json" -d '{"tag": {"name": "joy"}
 echo "Deleting tag with ID $TAG_ID..."
 curl -s -X DELETE http://localhost:$RAILS_PORT/api/v1/tags/$TAG_ID
 echo "Tag deleted."
-
-echo "Stopping Rails server..."
-kill $RAILS_SERVER_PID || true
-wait $RAILS_SERVER_PID 2>/dev/null
-echo "Rails server stopped."
 
 echo "API verification complete."
