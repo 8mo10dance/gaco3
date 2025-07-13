@@ -40,3 +40,22 @@ JSON の構造も決まっていないが、こちらも Rails の作法に則�
 ### データモデルについて
 
 「絵文字」は絵文字そのものだけを持ち、「タグ」はテキストのみを持つ。
+
+## 実行計画
+
+1.  **Railsプロジェクトの作成**
+    - `rails new . --api` を実行
+2.  **モデルの作成**
+    - `Emoji` モデル (`body:string`)
+    - `Tag` モデル (`name:string`)
+    - `EmojiTag` モデル (中間テーブル)
+3.  **コントローラーの作成**
+    - `Api::V1::EmojisController`
+    - `Api::V1::TagsController`
+4.  **ルーティングの設定**
+    - `config/routes.rb` に `emojis` と `tags` のリソースを定義
+5.  **データベースのセットアップ**
+    - `rails db:create`
+    - `rails db:migrate`
+6.  **コントローラーへのCRUD実装**
+    - 各コントローラーに基本的なCRUDアクションを実装
