@@ -1,0 +1,5 @@
+node_modules/
+.git/
+.vscode/
+playwright-report/
+test-results/

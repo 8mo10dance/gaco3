@@ -1,0 +1,6 @@
+version: '5'
+
+interaction:
+  npm:
+    service: playwright
+    command: npm
