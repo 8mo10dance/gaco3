@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "pw:install": "playwright install-deps",
+    "test": "playwright test"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
