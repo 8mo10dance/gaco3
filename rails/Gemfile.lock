@@ -92,6 +92,10 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
+    capybara-playwright-driver (0.5.7)
+      addressable
+      capybara
+      playwright-ruby-client (>= 1.16.0)
     carrierwave (3.1.2)
       activemodel (>= 6.0.0)
       activesupport (>= 6.0.0)
@@ -135,6 +139,10 @@ GEM
     marcel (1.0.4)
     matrix (0.4.3)
     method_source (1.1.0)
+    mime-types (3.7.0)
+      logger
+      mime-types-data (~> 3.2025, >= 3.2025.0507)
+    mime-types-data (3.2025.0805)
     mini_magick (5.2.0)
       benchmark
       logger
@@ -156,6 +164,9 @@ GEM
       racc (~> 1.4)
     nokogiri (1.15.7-x86_64-linux)
       racc (~> 1.4)
+    playwright-ruby-client (1.54.1)
+      concurrent-ruby (>= 1.1.6)
+      mime-types (>= 3.0)
     public_suffix (5.1.1)
     puma (4.3.12)
       nio4r (~> 2.0)
@@ -269,6 +280,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
   capybara
+  capybara-playwright-driver
   carrierwave (~> 3.1)
   carrierwave-aws (~> 1.6)
   concurrent-ruby (= 1.3.4)
