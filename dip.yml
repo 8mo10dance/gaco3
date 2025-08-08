@@ -1,6 +1,25 @@
 version: '5'
 
 interaction:
+  bundle:
+    service: rails
+    command: bundle
+  rails:
+    service: rails
+    command: bundle exec rails
+    subcommands:
+      s:
+        command: bundle exec rails s -b 0.0.0.0
+        compose:
+          run_options: [service-ports]
+  rspec:
+    service: rails
+    command: bundle exec rspec
   npm:
     service: playwright
     command: npm
+
+provision:
+  - dip bundle install
+  - dip rails db:migrate
+  - dip rails db:migrate RAILS_ENV=test

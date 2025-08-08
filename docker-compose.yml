@@ -1,4 +1,26 @@
 services:
+  rails:
+    build:
+      context: rails
+    image: myapp:1.0.1
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./rails:/rails
+      - bundle_rails60:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    extra_hosts:
+      - 'localhost.localstack.cloud:host-gateway'
+  localstack:
+    image: localstack/localstack:4.0
+    ports:
+      - "4566:4566"
+    environment:
+      DOCKER_SOCK: /var/run/docker.sock
+      DEBUG: 1
+    volumes:
+      - ./localstack/init:/etc/localstack/init
   playwright:
     build:
       context: pw01
@@ -11,6 +33,7 @@ services:
       - test-results:/playwright/test-results
 
 volumes:
+  bundle_rails60:
   node_modules:
   playwright-report:
   test-results:
