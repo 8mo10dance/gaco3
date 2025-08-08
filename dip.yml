@@ -1,4 +1,4 @@
-version: "4"
+version: '5'
 
 interaction:
   bundle:
@@ -15,6 +15,9 @@ interaction:
   rspec:
     service: rails
     command: bundle exec rspec
+  npm:
+    service: playwright
+    command: npm
 
 provision:
   - dip bundle install

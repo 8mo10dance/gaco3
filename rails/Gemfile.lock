@@ -99,6 +99,7 @@ GEM
     diff-lcs (1.6.2)
     erubi (1.13.1)
     ffi (1.17.2-aarch64-linux-gnu)
+    ffi (1.17.2-x86_64-linux-gnu)
     globalid (1.1.0)
       activesupport (>= 5.0)
     i18n (1.14.7)
@@ -142,6 +143,8 @@ GEM
       net-protocol
     nio4r (2.7.4)
     nokogiri (1.15.7-aarch64-linux)
+      racc (~> 1.4)
+    nokogiri (1.15.7-x86_64-linux)
       racc (~> 1.4)
     public_suffix (5.1.1)
     puma (4.3.12)
