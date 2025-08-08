@@ -31,6 +31,8 @@ services:
       - node_modules:/playwright/node_modules
       - playwright-report:/playwright/playwright-report
       - test-results:/playwright/test-results
+    depends_on:
+      - rails
 
 volumes:
   bundle_rails60:
