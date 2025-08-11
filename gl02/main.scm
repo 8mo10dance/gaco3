@@ -24,3 +24,9 @@
 (define (combine T1 T2)
   (lambda (x)
     (T2 (T1 x))))
+
+(display (pow 2 10))
+(newline)
+
+(display (fib 10))
+(newline)
