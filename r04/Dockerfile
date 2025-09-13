@@ -8,4 +8,8 @@ WORKDIR /ruby
 RUN gem update --system 3.3.22 && \
     gem install bundler
 
+COPY Gemfile Gemfile.lock .
+
+RUN bundle install
+
 CMD ["/usr/bin/bash"]
