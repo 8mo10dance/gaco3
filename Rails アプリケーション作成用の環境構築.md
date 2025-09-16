@@ -1,8 +1,8 @@
 # Rails アプリケーション作成用の環境構築
 
-`rails new` するための Docker コンテナを作成する。
+Dagger shell を使って `rails new` する。
 
-以下のファイルを作成する。
+1. Dockerfile を作成する
 
 ```Dockerfile:Dockerfile
 ARG RUBY_VERSION
@@ -15,35 +15,64 @@ WORKDIR /ruby
 RUN gem update --system 3.3.22 && \
     gem install bundler
 
+COPY Gemfile Gemfile.lock .
+
+RUN bundle install
+
 CMD ["/usr/bin/bash"]
 ```
 
-```yaml:docker-compose.yml
-services:
-  ruby:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      args:
-        - RUBY_VERSION=${RUBY_VERSION}
-    volumes:
-      - .:/ruby
-      - bundle:/usr/local/bundle
+2. Gemfile を作成する
 
-volumes:
-  bundle:
+```ruby:Gemfile
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+gem "rails", "~> 6.0.0" # 適宜書き換える
+
+# bundle install するときに
+# `uninitialized constant ActiveSupport::LoggerThreadSafeLevel::Logger`
+# のエラーが出るため
+# See: https://zenn.dev/84san/scraps/0f612b92969e99
+gem "concurrent-ruby", "1.3.4"
 ```
 
-```text:.env
-RUBY_VERSION=2.7.8 # 適宜指定する
+とりあえず Gemfile.lock も作っておく必要があるので、作っておく
+```bash
+touch Gemfile.lock
 ```
 
-以下のコマンドを実行して、Rails アプリケーションを作成する。
+3. rails new するための dagger スクリプトを作成する
+
+```shell:dagger.sh
+#!/usr/bin/env bash
+
+set -eu
+
+RUBY_VERSION=${RUBY_VERSION:-}
+APP_NAME=${APP_NAME:-myapp}
+RAILS_NEW_OPTIONS=${RAILS_NEW_OPTIONS:-}
+
+echo "Ruby Version: ${RUBY_VERSION}"
+echo "To run: rails new ${APP_NAME} ${RAILS_NEW_OPTIONS}"
+
+dagger shell <<EOF
+container |
+  build . --build-args RUBY_VERSION=${RUBY_VERSION} |
+  with-exec -- rails new /ruby/${APP_NAME} ${RAILS_NEW_OPTIONS} |
+  directory /ruby/${APP_NAME} |
+  export ./${APP_NAME}
+EOF
+```
+
+```shell:.envrc
+export RUBY_VERSION=2.7.8
+export RAILS_NEW_OPTIONS='--skip-javascript --skip-test'
+```
+
+4. 以下のコマンドを実行して、Rails アプリケーションを作成する。
 
 ```bash
-docker compose build
-docker compose run --rm ruby bash
-> bundle init
+./dagger.sh
 ```
-
-Gemfile が生成されるので、`# gem "rails"` のコメントアウトを外して `bundle install` する。
