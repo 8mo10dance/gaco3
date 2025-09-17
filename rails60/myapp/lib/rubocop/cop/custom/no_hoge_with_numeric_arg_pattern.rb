@@ -18,18 +18,22 @@ module RuboCop
 
         def_node_matcher :hoge_with_value_hash?, <<~PATTERN
           (send _ :hoge
-            (hash
-              (pair
-                (sym :value)
-                (int _))
-              ...))
+            (hash ...))
+        PATTERN
+
+        def_node_matcher :value_int_pair?, <<~PATTERN
+          (pair
+            (sym :value)
+            (int _))
         PATTERN
 
         def on_send(node)
-          # 定義したパターンにマッチするかをチェック
-          if hoge_with_value_hash?(node)
-            add_offense(node)
-          end
+          return unless hoge_with_value_hash?(node)
+
+          first_arg = node.arguments.first
+          return unless first_arg.pairs.any? { |pair_node| value_int_pair?(pair_node) }
+
+          add_offense(node)
         end
       end
     end
