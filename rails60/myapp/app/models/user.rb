@@ -8,7 +8,7 @@ class User < ApplicationRecord
   end
 
   def call
-    hoge y: 0, value: 1, x: 0
+    hoge y: 0, value: { y: 1, x: 0 }
     hoge value: 1.1
     hoge value: '1.1'
   end

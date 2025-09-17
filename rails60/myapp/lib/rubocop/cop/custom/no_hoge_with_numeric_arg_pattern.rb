@@ -3,16 +3,6 @@
 module RuboCop
   module Cop
     module Custom
-      # この Cop は、`hoge` メソッドの引数が数値である場合に警告します。
-      #
-      # @example
-      #   # bad
-      #   hoge(123)
-      #   hoge(4.56)
-      #
-      #   # good
-      #   hoge('string')
-      #   hoge(variable)
       class NoHogeWithNumericArgPattern < Base
         MSG = 'Do not call `hoge` with a numeric argument.'.freeze
 
@@ -24,7 +14,9 @@ module RuboCop
         def_node_matcher :value_int_pair?, <<~PATTERN
           (pair
             (sym :value)
-            (int _))
+            (hash
+              (pair (sym _) (int {0 1}))
+              (pair (sym _) (int {0 1}))))
         PATTERN
 
         def on_send(node)
