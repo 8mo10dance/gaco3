@@ -7,9 +7,15 @@ AllCops:
   TargetRailsVersion: 6.0
 
 require:
-  - './lib/rubocop/cop/custom/enumerize_boolean_binary_values.rb'
+  # - './lib/rubocop/cop/custom/enumerize_boolean_binary_values.rb'
+  - './lib/rubocop/cop/custom/no_hoge_with_numeric_arg_pattern.rb'
 
-Custom/EnumerizeBooleanBinaryValues:
+# Custom/EnumerizeBooleanBinaryValues:
+#   Enabled: true
+#   Include:
+#     - 'app/models/**/*.rb'
+
+NoHogeWithNumericArgPattern:
   Enabled: true
   Include:
     - 'app/models/**/*.rb'
