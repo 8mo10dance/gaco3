@@ -1,0 +1,67 @@
+#+begin_src shell :results output raw
+  gemini -p - <<EOF
+  Emacs の org-mode を使っている
+  begin_src の出力をプレーンテキストにしたい
+  どうすればいい？
+  EOF
+#+end_src
+
+#+RESULTS:
+org-modeの`begin_src`ブロックの出力をプレーンテキストにするには、ヘッダー引数に`:results raw`を追加するのが最も簡単な方法です。
+
+例えば、以下のように記述します。
+
+```org
+#+begin_src shell :results raw
+  echo "Hello, World!"
+  echo "This is a test."
+#+end_src
+
+#+RESULTS:
+Hello, World!
+This is a test.
+
+```
+
+これを`C-c C-c`で実行すると、出力は次のようになります。
+
+```org
+#+RESULTS:
+Hello, World!
+This is a test.
+```
+
+もし`:results raw`を指定しない場合、出力がコードブロックとして整形されることがあります。
+
+```org
+#+begin_src shell
+  echo "Hello, World!"
+  echo "This is a test."
+#+end_src
+
+#+RESULTS:
+: Hello, World!
+: This is a test.
+```
+
+すべてのコードブロックでこの設定をデフォルトにしたい場合は、`init.el`（または`.emacs`）に以下の設定を追加することもできます。
+
+```elisp
+(setq org-babel-default-header-args
+      (add-to-list 'org-babel-default-header-args
+                   '(:results . "raw")))
+```
+
+
+#+begin_src shell :results output raw
+  cat <<EOF
+  hoge
+  fuga
+  piyo
+  EOF
+#+end_src
+
+#+RESULTS:
+hoge
+fuga
+piyo
