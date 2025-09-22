@@ -10,9 +10,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Dagger
-        uses: dagger/setup-dagger@v5
-
       - name: Run Dagger Shell
-        run: |
-          dagger shell -c "apk add --no-cache git && git version"
+        uses: dagger/dagger-for-github@v8.2.0
+        with:
+          shell: |
+            container |
+              from alpine |
+              with-exec echo,"hello, world!" |
+              stdout
