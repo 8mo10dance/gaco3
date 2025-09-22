@@ -1,0 +1,42 @@
+name: Dagger Shell Example
+
+on:
+  push:
+
+env:
+  RAILS_ENV: test
+  AWS_ACCESS_KEY_ID: dummy
+  AWS_SECRET_ACCESS_KEY: dummy
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-ruby-docker-image.yml
+    with:
+      ruby-version: '3.2.0'
+      debian-version: bullseye
+    secrets: inherit
+
+  dagger-example:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Dagger Shell
+        uses: dagger/dagger-for-github@v8.2.0
+        with:
+          shell: |
+            container |
+              from dockerdxm/ruby:3.2.0 |
+              with-directory /r01 ./r01 |
+              with-workdir /r01 |
+              with-env-variable RAILS_ENV ${{ env.RAILS_ENV }} |
+              with-env-variable AWS_ACCESS_KEY_ID ${{ env.AWS_ACCESS_KEY_ID }} |
+              with-env-variable AWS_SECRET_ACCESS_KEY ${{ env.AWS_SECRET_ACCESS_KEY }} |
+              with-exec gem install bundler:2.4.1 |
+              with-exec -- bundle install --jobs 4 --retry 3 |
+              with-exec bundle exec rake db:migrate |
+              with-exec bundle exec rspec |
+              stdout
