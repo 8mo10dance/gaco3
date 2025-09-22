@@ -1,67 +1,48 @@
 #+begin_src shell :results output raw
   gemini -p - <<EOF
-  Emacs の org-mode を使っている
-  begin_src の出力をプレーンテキストにしたい
-  どうすればいい？
+  dagger shell を Github Actions で使いたい。
+  何かサンプルコードを作成して
   EOF
 #+end_src
 
 #+RESULTS:
-org-modeの`begin_src`ブロックの出力をプレーンテキストにするには、ヘッダー引数に`:results raw`を追加するのが最も簡単な方法です。
+はい、承知いたしました。
+Dagger ShellをGitHub Actionsで利用するためのサンプルワークフローを作成します。
 
-例えば、以下のように記述します。
+`.github/workflows/dagger-shell-example.yml` というファイル名で、Daggerのセットアップと、`dagger shell`コマンドの実行を含むワークフローを作成します。
 
-```org
-#+begin_src shell :results raw
-  echo "Hello, World!"
-  echo "This is a test."
-#+end_src
+I will now create the file `.github/workflows/dagger-shell-example.yml`. This workflow will set up the Dagger environment and execute a `dagger shell` command.申し訳ありません、私は直接ファイルを作成する権限を持っていないようです。
 
-#+RESULTS:
-Hello, World!
-This is a test.
+代わりに、GitHub Actionsワークフローの内容を以下に示しますので、お手数ですが`.github/workflows/dagger-shell-example.yml`というファイル名でご自身で作成していただけますでしょうか。
 
+```yaml
+name: Dagger Shell Example
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  dagger-example:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Dagger
+        uses: dagger/setup-dagger@v5
+
+      - name: Run Dagger Shell
+        run: |
+          dagger shell -c "apk add --no-cache git && git version"
 ```
 
-これを`C-c C-c`で実行すると、出力は次のようになります。
+**このワークフローについて:**
 
-```org
-#+RESULTS:
-Hello, World!
-This is a test.
-```
+*   `main`ブランチへのプッシュ時、または手動(`workflow_dispatch`)で実行できます。
+*   `dagger/setup-dagger@v5` アクションを使用して、実行環境にDagger CLIをセットアップします。
+*   `dagger shell -c "..."` コマンドを実行します。
+    *   この例では、Alpine Linuxベースのデフォルトコンテナ内で`apk`を使って`git`をインストールし、`git version`を実行しています。
 
-もし`:results raw`を指定しない場合、出力がコードブロックとして整形されることがあります。
-
-```org
-#+begin_src shell
-  echo "Hello, World!"
-  echo "This is a test."
-#+end_src
-
-#+RESULTS:
-: Hello, World!
-: This is a test.
-```
-
-すべてのコードブロックでこの設定をデフォルトにしたい場合は、`init.el`（または`.emacs`）に以下の設定を追加することもできます。
-
-```elisp
-(setq org-babel-default-header-args
-      (add-to-list 'org-babel-default-header-args
-                   '(:results . "raw")))
-```
-
-
-#+begin_src shell :results output raw
-  cat <<EOF
-  hoge
-  fuga
-  piyo
-  EOF
-#+end_src
-
-#+RESULTS:
-hoge
-fuga
-piyo
+このサンプルをベースに、プロジェクトの要件に合わせてコマンドを自由に変更してください。

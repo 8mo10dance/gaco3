@@ -1,0 +1,18 @@
+name: Dagger Shell Example
+
+on:
+  push:
+
+jobs:
+  dagger-example:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Dagger
+        uses: dagger/setup-dagger@v5
+
+      - name: Run Dagger Shell
+        run: |
+          dagger shell -c "apk add --no-cache git && git version"
