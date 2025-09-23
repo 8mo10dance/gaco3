@@ -17,38 +17,17 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
-      - uses: docker/setup-buildx-action@v3
-      - name: Restore from and save to external cache
-        uses: actions/cache@v4
-        with:
-          path: .cache/${{ github.repository }}/docker-build-cache
-          key: ${{ runner.os }}-lo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-lo-
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: ./r01
-          push: true
-          tags: dockerdxm/gaco3-r01-rails:test
-          cache-from: |
-            type=local,src=.cache/${{ github.repository }}/docker-build-cache
-          cache-to: |
-            type=local,dest=.cache/${{ github.repository }}/docker-build-cache
+    uses: ./.github/workflows/build-ruby-docker-image.yml
+    with:
+      ruby-version: 3.2.0
+      debian-version: bullseye
+    secrets: inherit
 
   rspec:
     needs: build
     runs-on: ubuntu-latest
     container:
-      image: dockerdxm/gaco3-r01-rails:test
+      image: dockerdxm/ruby:3.2.0
       credentials:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}

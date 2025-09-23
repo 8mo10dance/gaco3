@@ -1,0 +1,50 @@
+name: build-ruby-docker-image
+
+on:
+  workflow_call:
+    inputs:
+      ruby-version:
+        type: string
+        required: true
+      debian-version:
+        type: string
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      RUBY_VERSION: "${{ inputs.ruby-version }}"
+      DEBIAN_VERSION: "${{ inputs.debian-version }}"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Restore from and save to external cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/${{ github.repository }}/docker-build-cache
+          key: ${{ runner.os }}-ruby-${{ env.RUBY_VERSION }}-${{ env.DEBIAN_VERSION }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-ruby-${{ env.RUBY_VERSION }}-${{ env.DEBIAN_VERSION }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./.docker/ruby
+          build-args: |
+            RUBY_VERSION=${{ env.RUBY_VERSION }}
+            DEBIAN_VERSION=${{ env.DEBIAN_VERSION }}
+          push: true
+          tags: dockerdxm/ruby:${{ env.RUBY_VERSION }}
+          cache-from: |
+            type=local,src=.cache/${{ github.repository }}/docker-build-cache
+          cache-to: |
+            type=local,dest=.cache/${{ github.repository }}/docker-build-cache
