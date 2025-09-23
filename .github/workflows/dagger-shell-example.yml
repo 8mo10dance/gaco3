@@ -3,6 +3,11 @@ name: Dagger Shell Example
 on:
   push:
 
+env:
+  RAILS_ENV: test
+  AWS_ACCESS_KEY_ID: dummy
+  AWS_SECRET_ACCESS_KEY: dummy
+
 jobs:
   dagger-example:
     runs-on: ubuntu-latest
@@ -18,5 +23,13 @@ jobs:
               from ruby:3.2.0-slim-bullseye |
               with-exec apt-get update |
               with-exec -- apt-get install -y --no-install-recommends make gcc |
-              with-exec -- gcc --version |
+              with-directory /r01 ./r01 |
+              with-workdir /r01 |
+              with-env-variable RAILS_ENV ${{ env.RAILS_ENV }} |
+              with-env-variable AWS_ACCESS_KEY_ID ${{ env.AWS_ACCESS_KEY_ID }} |
+              with-env-variable AWS_SECRET_ACCESS_KEY ${{ env.AWS_SECRET_ACCESS_KEY }} |
+              with-exec gem install bundler:2.4.1 |
+              with-exec -- bundle install --jobs 4 --retry 3 |
+              with-exec bundle exec rake db:migrate |
+              with-exec bundle exec rspec |
               stdout
