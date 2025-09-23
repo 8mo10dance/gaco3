@@ -3,6 +3,10 @@ name: Dagger Shell Example
 on:
   push:
 
+defaults:
+  run:
+    working-directory: r01
+
 env:
   RAILS_ENV: test
   AWS_ACCESS_KEY_ID: dummy
