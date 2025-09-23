@@ -1,7 +1,7 @@
 services:
   rails:
-    build: .
-    image: r01-rails:1.1.0
+    image: dockerdxm/ruby:3.2.0
+    working_dir: /rails
     volumes:
       - ${PWD}:/rails
       - bundle:/usr/local/bundle
@@ -10,6 +10,7 @@ services:
     environment:
       AWS_ACCESS_KEY_ID: dummy
       AWS_SECRET_ACCESS_KEY: dummy
+    command: bash -lc "rm -f tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0 -p 3000"
   localstack:
     image: localstack/localstack:2.3.2
     ports:
