@@ -1,4 +1,7 @@
 {
   "name": "r01",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@dagger.io/dagger": "^0.18.19"
+  }
 }
