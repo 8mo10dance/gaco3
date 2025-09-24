@@ -26,18 +26,16 @@ jobs:
   rspec:
     needs: build
     runs-on: ubuntu-latest
-    container:
-      image: dockerdxm/ruby:3.2.0
-      credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-      - name: Install required gems
-        run: |
-          gem install bundler:2.4.1
-          bundle install --jobs 4 --retry 3
-      - name: Migrate DB
-        run: bundle exec rake db:migrate
-      - name: Run RSpec
-        run: bundle exec rspec
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dagger SDK
+        run: npm install
+
+      - name: Run Dagger Script
+        run: npm run rspec
