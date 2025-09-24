@@ -1,0 +1,48 @@
+#+begin_src shell :results output raw
+  gemini -p - <<EOF
+  dagger shell を Github Actions で使いたい。
+  何かサンプルコードを作成して
+  EOF
+#+end_src
+
+#+RESULTS:
+はい、承知いたしました。
+Dagger ShellをGitHub Actionsで利用するためのサンプルワークフローを作成します。
+
+`.github/workflows/dagger-shell-example.yml` というファイル名で、Daggerのセットアップと、`dagger shell`コマンドの実行を含むワークフローを作成します。
+
+I will now create the file `.github/workflows/dagger-shell-example.yml`. This workflow will set up the Dagger environment and execute a `dagger shell` command.申し訳ありません、私は直接ファイルを作成する権限を持っていないようです。
+
+代わりに、GitHub Actionsワークフローの内容を以下に示しますので、お手数ですが`.github/workflows/dagger-shell-example.yml`というファイル名でご自身で作成していただけますでしょうか。
+
+```yaml
+name: Dagger Shell Example
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  dagger-example:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Dagger
+        uses: dagger/setup-dagger@v5
+
+      - name: Run Dagger Shell
+        run: |
+          dagger shell -c "apk add --no-cache git && git version"
+```
+
+**このワークフローについて:**
+
+*   `main`ブランチへのプッシュ時、または手動(`workflow_dispatch`)で実行できます。
+*   `dagger/setup-dagger@v5` アクションを使用して、実行環境にDagger CLIをセットアップします。
+*   `dagger shell -c "..."` コマンドを実行します。
+    *   この例では、Alpine Linuxベースのデフォルトコンテナ内で`apk`を使って`git`をインストールし、`git version`を実行しています。
+
+このサンプルをベースに、プロジェクトの要件に合わせてコマンドを自由に変更してください。
