@@ -1,8 +1,6 @@
 {
   "name": "r01",
   "engineVersion": "v0.19.0",
-  "sdk": {
-    "source": "typescript"
-  },
+  "sdk": "typescript",
   "source": ".dagger"
 }

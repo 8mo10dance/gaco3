@@ -1,19 +1,25 @@
-import { dag, Container, object, func } from "@dagger.io/dagger"
+import { dag, Container, Directory, object, func } from "@dagger.io/dagger"
 
 @object()
 export class R01 {
   /**
-   * Returns a container that echoes whatever string argument is provided
+   * Run RSpec tests in a Ruby container
    */
   @func()
-  rspec(rubyVersion = '3.2.0', railsEnv = 'test', awsAccessKeyId = 'dummy', awsSecretAccessKey = 'dummy'): Container {
-    const hostDir = client.host().directory(".");
-    const bundleCache = client.cacheVolume("bundle-cache");
+  async rspec(
+    source?: Directory,
+    rubyVersion = '3.2.0', 
+    railsEnv = 'test', 
+    awsAccessKeyId = 'dummy', 
+    awsSecretAccessKey = 'dummy'
+  ): Promise<string> {
+    const bundleCache = dag.cacheVolume("bundle-cache");
+    const sourceDir = source || dag.currentModule().source().directory("..");
 
-    return dag
+    return await dag
       .container()
       .from(`dockerdxm/ruby:${rubyVersion}`)
-      .withDirectory("/r01", hostDir)
+      .withDirectory("/r01", sourceDir)
       .withWorkdir("/r01")
       .withMountedCache("/usr/local/bundle", bundleCache)
       .withEnvVariable("RAILS_ENV", railsEnv)
@@ -21,6 +27,16 @@ export class R01 {
       .withEnvVariable("AWS_SECRET_ACCESS_KEY", awsSecretAccessKey)
       .withExec(["gem", "install", "bundler:2.4.1"])
       .withExec(["bundle", "install", "--jobs", "4", "--retry", "3"])
-      .withExec(["bundle", "exec", "rake", "db:migrate"]);
+      .withExec(["bundle", "exec", "rake", "db:migrate"])
+      .withExec(["bundle", "exec", "rspec"])
+      .stdout();
+  }
+
+  /**
+   * Run RSpec tests with default source directory
+   */
+  @func()
+  async test(): Promise<string> {
+    return this.rspec();
   }
 }
