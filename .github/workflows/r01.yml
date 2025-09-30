@@ -6,6 +6,10 @@ on:
       - '.github/workflows/r01.yml'
       - 'r01/**/*'
 
+permissions:
+  contents: read
+  packages: write
+
 defaults:
   run:
     working-directory: r01

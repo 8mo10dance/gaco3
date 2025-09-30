@@ -11,7 +11,7 @@ export default function withApp(client) {
 
   return client
     .container()
-    .from(`dockerdxm/ruby:${RUBY_VERSION}`)
+    .from(`ghcr.io/8mo10dance/gaco3/ruby:${RUBY_VERSION}`)
     .withDirectory("/r01", hostDir)
     .withWorkdir("/r01")
     .withMountedCache("/usr/local/bundle", bundleCache)
