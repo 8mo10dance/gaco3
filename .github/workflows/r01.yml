@@ -6,14 +6,13 @@ on:
       - '.github/workflows/r01.yml'
       - 'r01/**/*'
 
+permissions:
+  contents: read
+  packages: write
+
 defaults:
   run:
     working-directory: r01
-
-env:
-  RAILS_ENV: test
-  AWS_ACCESS_KEY_ID: dummy
-  AWS_SECRET_ACCESS_KEY: dummy
 
 jobs:
   build:
@@ -39,3 +38,5 @@ jobs:
 
       - name: Run Dagger Script
         run: npm run rspec
+        env:
+          DOCKER_IMAGE: "ghcr.io/${{ github.repository }}/ruby:3.2.0"
