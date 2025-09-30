@@ -1,19 +1,4 @@
-/**
- * A generated module for R01 functions
- *
- * This module has been generated via dagger init and serves as a reference to
- * basic module structure as you get started with Dagger.
- *
- * Two functions have been pre-created. You can modify, delete, or add to them,
- * as needed. They demonstrate usage of arguments and return types using simple
- * echo and grep commands. The functions can be called from the dagger CLI or
- * from one of the SDKs.
- *
- * The first line in this comment block is a short description line and the
- * rest is a long description with more detail on the module's purpose or usage,
- * if appropriate. All modules should have a short description.
- */
-import { dag, Container, Directory, object, func } from "@dagger.io/dagger"
+import { dag, Container, object, func } from "@dagger.io/dagger"
 
 @object()
 export class R01 {
@@ -21,21 +6,21 @@ export class R01 {
    * Returns a container that echoes whatever string argument is provided
    */
   @func()
-  containerEcho(stringArg: string): Container {
-    return dag.container().from("alpine:latest").withExec(["echo", stringArg])
-  }
+  rspec(rubyVersion = '3.2.0', railsEnv = 'test', awsAccessKeyId = 'dummy', awsSecretAccessKey = 'dummy'): Container {
+    const hostDir = client.host().directory(".");
+    const bundleCache = client.cacheVolume("bundle-cache");
 
-  /**
-   * Returns lines that match a pattern in the files of the provided Directory
-   */
-  @func()
-  async grepDir(directoryArg: Directory, pattern: string): Promise<string> {
     return dag
       .container()
-      .from("alpine:latest")
-      .withMountedDirectory("/mnt", directoryArg)
-      .withWorkdir("/mnt")
-      .withExec(["grep", "-R", pattern, "."])
-      .stdout()
+      .from(`dockerdxm/ruby:${rubyVersion}`)
+      .withDirectory("/r01", hostDir)
+      .withWorkdir("/r01")
+      .withMountedCache("/usr/local/bundle", bundleCache)
+      .withEnvVariable("RAILS_ENV", railsEnv)
+      .withEnvVariable("AWS_ACCESS_KEY_ID", awsAccessKeyId)
+      .withEnvVariable("AWS_SECRET_ACCESS_KEY", awsSecretAccessKey)
+      .withExec(["gem", "install", "bundler:2.4.1"])
+      .withExec(["bundle", "install", "--jobs", "4", "--retry", "3"])
+      .withExec(["bundle", "exec", "rake", "db:migrate"]);
   }
 }
