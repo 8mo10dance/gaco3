@@ -38,3 +38,5 @@ jobs:
 
       - name: Run Dagger Script
         run: npm run rspec
+        env:
+          DOCKER_IMAGE: "ghcr.io/${{ github.repository }}/ruby:3.2.0"
