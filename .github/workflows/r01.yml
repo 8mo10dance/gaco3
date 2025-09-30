@@ -34,3 +34,5 @@ jobs:
 
       - name: Run Dagger Script
         run: npm run rspec
+
+      - run: ls bundle-cache
