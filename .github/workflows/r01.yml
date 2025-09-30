@@ -14,11 +14,6 @@ defaults:
   run:
     working-directory: r01
 
-env:
-  RAILS_ENV: test
-  AWS_ACCESS_KEY_ID: dummy
-  AWS_SECRET_ACCESS_KEY: dummy
-
 jobs:
   build:
     uses: ./.github/workflows/build-ruby-docker-image.yml
