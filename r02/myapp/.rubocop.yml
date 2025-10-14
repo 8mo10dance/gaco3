@@ -5,3 +5,9 @@ plugins:
 
 AllCops:
   TargetRailsVersion: 6.1
+
+require:
+  - ./lib/rubocop/cop/custom_cops/baby_squeel_where_has.rb
+
+CustomCops/BabySqueelWhereHas:
+  Enabled: true
