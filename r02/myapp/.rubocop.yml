@@ -1,0 +1,5 @@
+plugins:
+  - rubocop-rails
+
+AllCops:
+  TargetRailsVersion: 6.1
