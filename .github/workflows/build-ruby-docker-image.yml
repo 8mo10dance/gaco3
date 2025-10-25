@@ -37,14 +37,6 @@ jobs:
 
       - uses: docker/setup-buildx-action@v3
 
-      - name: Restore from and save to external cache
-        uses: actions/cache@v4
-        with:
-          path: .cache/${{ github.repository }}/docker-build-cache
-          key: ${{ runner.os }}-ruby-${{ env.RUBY_VERSION }}-${{ env.DEBIAN_VERSION }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-ruby-${{ env.RUBY_VERSION }}-${{ env.DEBIAN_VERSION }}
-
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -56,6 +48,6 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/ruby:${{ env.RUBY_VERSION }}
           cache-from: |
-            type=local,src=.cache/${{ github.repository }}/docker-build-cache
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/ruby:${{ env.RUBY_VERSION }}-build-cache
           cache-to: |
-            type=local,dest=.cache/${{ github.repository }}/docker-build-cache
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/ruby:${{ env.RUBY_VERSION }}-build-cache,mode=max
