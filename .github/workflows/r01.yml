@@ -26,5 +26,12 @@ jobs:
       image: dockerdxm/ruby:3.2.0
     steps:
       - uses: actions/checkout@v4
+      - name: Cache bundle
+        uses: actions/cache@v4
+        with:
+          path: r01/vendor/bundle
+          key: ${{ runner.os }}-r01-bundle-${{ hashFiles('r01/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-r01-bundle-
       - name: Run RSpec
         run: make rspec
