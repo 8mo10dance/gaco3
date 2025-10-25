@@ -10,11 +10,6 @@ defaults:
   run:
     working-directory: r01
 
-env:
-  RAILS_ENV: test
-  AWS_ACCESS_KEY_ID: dummy
-  AWS_SECRET_ACCESS_KEY: dummy
-
 jobs:
   build:
     uses: ./.github/workflows/build-ruby-docker-image.yml
@@ -26,16 +21,9 @@ jobs:
   rspec:
     needs: build
     runs-on: ubuntu-latest
+    container:
+      image: dockerdxm/ruby:3.2.0
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Dagger SDK
-        run: npm install
-
-      - name: Run Dagger Script
-        run: npm run rspec
+      - name: Run RSpec
+        run: make rspec
