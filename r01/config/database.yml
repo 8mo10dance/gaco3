@@ -4,14 +4,15 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: gaco3
   password: password
-  host: mysql
 
 development:
   <<: *default
+  host: mysql
   database: gaco3_development
 
 test:
   <<: *default
+  host: mysql_test
   database: gaco3_test
 
 production:

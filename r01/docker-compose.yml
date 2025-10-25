@@ -24,6 +24,17 @@ services:
       MYSQL_PASSWORD: password
     volumes:
       - mysql_data:/var/lib/mysql
+  mysql_test:
+    image: mysql:8.0
+    ports:
+      - '3307:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: gaco3_test
+      MYSQL_USER: gaco3
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_test_data:/var/lib/mysql
   localstack:
     image: localstack/localstack:2.3.2
     ports:
@@ -38,3 +49,4 @@ services:
 volumes:
   bundle:
   mysql_data:
+  mysql_test_data:
