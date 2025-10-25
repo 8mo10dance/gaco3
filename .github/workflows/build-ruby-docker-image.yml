@@ -14,6 +14,10 @@ on:
         required: false
         default: ""
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,8 +31,9 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: docker/setup-buildx-action@v3
 
@@ -49,7 +54,7 @@ jobs:
             DEBIAN_VERSION=${{ env.DEBIAN_VERSION }}
             BUNDLER_VERSION=${{ env.BUNDLER_VERSION }}
           push: true
-          tags: dockerdxm/ruby:${{ env.RUBY_VERSION }}
+          tags: ghcr.io/${{ github.repository_owner }}/ruby:${{ env.RUBY_VERSION }}
           cache-from: |
             type=local,src=.cache/${{ github.repository }}/docker-build-cache
           cache-to: |
