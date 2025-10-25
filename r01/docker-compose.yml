@@ -1,3 +1,13 @@
+x-mysql-common: &mysql-common
+  image: mysql:8.0
+  environment:
+    MYSQL_ROOT_PASSWORD: password
+    MYSQL_DATABASE: r01
+    MYSQL_USER: rails_app_user
+    MYSQL_PASSWORD: password
+  volumes:
+    - ./docker/mysql/init:/docker-entrypoint-initdb.d
+
 services:
   rails:
     build: .
@@ -14,26 +24,16 @@ services:
     depends_on:
       - mysql
   mysql:
-    image: mysql:8.0
+    <<: *mysql-common
     ports:
       - '3306:3306'
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: r01
-      MYSQL_USER: rails_app_user
-      MYSQL_PASSWORD: password
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
   mysql_test:
-    image: mysql:8.0
+    <<: *mysql-common
     ports:
       - '3307:3306'
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: r01
-      MYSQL_USER: rails_app_user
-      MYSQL_PASSWORD: password
     volumes:
       - mysql_test_data:/var/lib/mysql
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
