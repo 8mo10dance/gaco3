@@ -13,6 +13,13 @@ on:
         type: string
         required: false
         default: ""
+      ephemeral:
+        type: boolean
+        required: false
+        default: false
+    outputs:
+      docker-image-tag:
+        value: ${{ jobs.build.outputs.docker-image-tag }}
 
 permissions:
   contents: read
@@ -25,6 +32,8 @@ jobs:
       RUBY_VERSION: "${{ inputs.ruby-version }}"
       DEBIAN_VERSION: "${{ inputs.debian-version }}"
       BUNDLER_VERSION: "${{ inputs.bundler-version }}"
+    outputs:
+      docker-image-tag: ${{ steps.docker-image-tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
 
@@ -37,6 +46,16 @@ jobs:
 
       - uses: docker/setup-buildx-action@v3
 
+      - name: Generate docker image tag
+        id: docker-image-tag
+        run: |
+          if [ "${{ inputs.ephemeral }}" = "false" ]; then
+            tag="${RUBY_VERSION}"
+          else
+            tag="${RUBY_VERSION}-${{ github.sha }}"
+          fi
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -46,8 +65,9 @@ jobs:
             DEBIAN_VERSION=${{ env.DEBIAN_VERSION }}
             BUNDLER_VERSION=${{ env.BUNDLER_VERSION }}
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/ruby:${{ env.RUBY_VERSION }}
+          tags: ghcr.io/${{ github.repository_owner }}/ruby:${{ steps.docker-image-tag.outputs.tag }}
           cache-from: |
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/ruby:${{ steps.docker-image-tag.outputs.tag }}-build-cache
             type=registry,ref=ghcr.io/${{ github.repository_owner }}/ruby:${{ env.RUBY_VERSION }}-build-cache
           cache-to: |
-            type=registry,ref=ghcr.io/${{ github.repository_owner }}/ruby:${{ env.RUBY_VERSION }}-build-cache,mode=max
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/ruby:${{ steps.docker-image-tag.outputs.tag }}-build-cache,mode=max

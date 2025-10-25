@@ -21,13 +21,14 @@ jobs:
       ruby-version: 3.2.0
       debian-version: bullseye
       bundler-version: 2.4.1
+      ephemeral: ${{ github.ref != 'refs/heads/main' }}
     secrets: inherit
 
   rspec:
     needs: build
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository_owner }}/ruby:3.2.0
+      image: ghcr.io/${{ github.repository_owner }}/ruby:${{ needs.build.outputs.docker-image-tag }}
     steps:
       - uses: actions/checkout@v4
       - name: Cache bundle
