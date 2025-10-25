@@ -84,6 +84,7 @@ GEM
       aws-sigv4 (~> 1.6)
     aws-sigv4 (1.7.0)
       aws-eventstream (~> 1, >= 1.0.2)
+    bigdecimal (3.3.1)
     bindex (0.8.1)
     bootsnap (1.16.0)
       msgpack (~> 1.2)
@@ -210,6 +211,8 @@ GEM
     minitest (5.22.3)
     msgpack (1.7.2)
     multi_json (1.15.0)
+    mysql2 (0.5.7)
+      bigdecimal
     net-imap (0.3.7)
       date
       net-protocol
@@ -301,8 +304,6 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    sqlite3 (1.6.4-aarch64-linux)
-    sqlite3 (1.6.4-x86_64-linux)
     ssrf_filter (1.1.2)
     stimulus-rails (1.2.2)
       railties (>= 6.0.0)
@@ -348,13 +349,13 @@ DEPENDENCIES
   fog-aws
   importmap-rails
   jbuilder
+  mysql2 (~> 0.5)
   puma (~> 5.0)
   rack-cors
   rails (~> 7.0.7, >= 7.0.7.2)
   rspec-rails (~> 6.0.0)
   selenium-webdriver
   sprockets-rails
-  sqlite3 (~> 1.4)
   stimulus-rails
   turbo-rails
   tzinfo-data

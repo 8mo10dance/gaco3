@@ -1,6 +1,16 @@
+x-mysql-common: &mysql-common
+  image: mysql:8.0
+  environment:
+    MYSQL_ROOT_PASSWORD: password
+    MYSQL_DATABASE: r01
+    MYSQL_USER: rails_app_user
+    MYSQL_PASSWORD: password
+  volumes:
+    - ./docker/mysql/init:/docker-entrypoint-initdb.d
+
 services:
   rails:
-    image: dockerdxm/ruby:3.2.0
+    build: .
     working_dir: /rails
     volumes:
       - ${PWD}:/rails
@@ -11,6 +21,22 @@ services:
       AWS_ACCESS_KEY_ID: dummy
       AWS_SECRET_ACCESS_KEY: dummy
     command: bash -lc "rm -f tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0 -p 3000"
+    depends_on:
+      - mysql
+  mysql:
+    <<: *mysql-common
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+  mysql_test:
+    <<: *mysql-common
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysql_test_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
   localstack:
     image: localstack/localstack:2.3.2
     ports:
@@ -24,3 +50,5 @@ services:
 
 volumes:
   bundle:
+  mysql_data:
+  mysql_test_data:
