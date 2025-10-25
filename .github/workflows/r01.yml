@@ -16,6 +16,7 @@ jobs:
     with:
       ruby-version: 3.2.0
       debian-version: bullseye
+      bundler-version: 2.4.1
     secrets: inherit
 
   rspec:
