@@ -2,19 +2,19 @@ default: &default
   adapter: mysql2
   encoding: utf8mb4
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: gaco3
+  username: rails_app_user
   password: password
 
 development:
   <<: *default
   host: mysql
-  database: gaco3_development
+  database: r01
 
 test:
   <<: *default
   host: mysql_test
-  database: gaco3_test
+  database: r01
 
 production:
   <<: *default
-  database: gaco3_production
+  database: r01

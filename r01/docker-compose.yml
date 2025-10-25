@@ -19,8 +19,8 @@ services:
       - '3306:3306'
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: gaco3_development
-      MYSQL_USER: gaco3
+      MYSQL_DATABASE: r01
+      MYSQL_USER: rails_app_user
       MYSQL_PASSWORD: password
     volumes:
       - mysql_data:/var/lib/mysql
@@ -31,8 +31,8 @@ services:
       - '3307:3306'
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: gaco3_test
-      MYSQL_USER: gaco3
+      MYSQL_DATABASE: r01
+      MYSQL_USER: rails_app_user
       MYSQL_PASSWORD: password
     volumes:
       - mysql_test_data:/var/lib/mysql
