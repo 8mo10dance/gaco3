@@ -11,31 +11,31 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.0].define(version: 2024_02_24_081413) do
-  create_table "posts", force: :cascade do |t|
-    t.text "content", default: "", null: false
+  create_table "posts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.text "content", null: false
     t.string "image", default: "", null: false
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
-  create_table "tasks", force: :cascade do |t|
-    t.string "title", default: "", null: false
-    t.text "content", default: "", null: false
+  create_table "tasks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "タスク", force: :cascade do |t|
+    t.string "title", default: "", null: false, comment: "タイトル"
+    t.text "content", null: false, comment: "内容"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "user_avatars", force: :cascade do |t|
-    t.integer "user_id"
+  create_table "user_avatars", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id"
     t.string "image", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_user_avatars_on_user_id"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
