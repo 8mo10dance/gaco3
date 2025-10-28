@@ -1,6 +1,6 @@
 services:
   rails:
-    image: dockerdxm/ruby:3.2.0
+    image: ghcr.io/8mo10dance/ruby:3.2.0
     working_dir: /rails
     volumes:
       - ${PWD}:/rails
