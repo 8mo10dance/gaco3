@@ -9,8 +9,7 @@ x-references:
 
 services:
   rails:
-    image: ghcr.io/8mo10dance/ruby:3.2.0
-    working_dir: /rails
+    build: .
     volumes:
       - ${PWD}:/rails
       - bundle:/usr/local/bundle
