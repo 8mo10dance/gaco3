@@ -29,8 +29,32 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/${{ github.repository_owner }}/ruby:${{ needs.build.outputs.docker-image-tag }}
+      env:
+        MYSQL_USER: rails_app_user
+    services:
+      mysql_test:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_USER: rails_app_user
+          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: r01
+        ports:
+          - '3306:3306'
+        options: --health-cmd="mysqladmin ping -h localhost --silent" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v4
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-r01-apt-${{ hashFiles('r01/apt-packages') }}
+          restore-keys: |
+            ${{ runner.os }}-r01-apt-
+      - name: Install dependencies
+        run: |
+          apt-get update -qq
+          xargs -a apt-packages apt-get install --no-install-recommends -y
       - name: Cache bundle
         uses: actions/cache@v4
         with:

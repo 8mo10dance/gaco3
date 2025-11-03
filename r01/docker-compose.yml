@@ -1,16 +1,28 @@
+x-references:
+  mysql: &mysql
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: rails_app_user
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: r01
+
 services:
   rails:
-    image: ghcr.io/8mo10dance/ruby:3.2.0
-    working_dir: /rails
+    build: .
     volumes:
       - ${PWD}:/rails
       - bundle:/usr/local/bundle
     ports:
       - '3000:3000'
     environment:
+      MYSQL_USER: rails_app_user
       AWS_ACCESS_KEY_ID: dummy
       AWS_SECRET_ACCESS_KEY: dummy
     command: bash -lc "rm -f tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0 -p 3000"
+    depends_on:
+      - mysql
+      - mysql_test
   localstack:
     image: localstack/localstack:2.3.2
     ports:
@@ -21,6 +33,20 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./localstack/init:/etc/localstack/init"
+  mysql:
+    <<: *mysql
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+  mysql_test:
+    <<: *mysql
+    ports:
+      - '13306:3306'
+    volumes:
+      - mysql_test_data:/var/lib/mysql
 
 volumes:
   bundle:
+  mysql_data:
+  mysql_test_data:
