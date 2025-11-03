@@ -1,3 +1,12 @@
+x-references:
+  mysql: &mysql
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: rails_app_user
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: r01
+
 services:
   rails:
     image: ghcr.io/8mo10dance/ruby:3.2.0
@@ -21,6 +30,20 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./localstack/init:/etc/localstack/init"
+  mysql:
+    <<: *mysql
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+  mysql_test:
+    <<: *mysql
+    ports:
+      - '13306:3306'
+    volumes:
+      - mysql_test_data:/var/lib/mysql
 
 volumes:
   bundle:
+  mysql_data:
+  mysql_test_data:
