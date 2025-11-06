@@ -48,13 +48,13 @@ Array *append(Array *arr, int new_value) {
 
   Array *new_arr = malloc(sizeof(Array));
 
-
-  new_arr->len = arr->len + 1;
+  new_arr->len = arr->len;
   new_arr->cap = arr->cap * 2;
-  int new_p[new_arr->cap];
+  int *new_p = malloc(sizeof(int) * new_arr->cap);
   new_arr->p = new_p;
   copy(arr, new_arr);
-  new_arr->p[new_arr->len-1] = new_value;
+  new_arr->p[new_arr->len] = new_value;
+  new_arr->len++;
 
   return new_arr;
 }
