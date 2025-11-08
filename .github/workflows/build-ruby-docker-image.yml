@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - '.github/workflows/build-ruby-docker-image.yml'
-      - '.dockerdev/ruby/**/*'
+      - '.docker/ruby/**/*'
 
 permissions:
   contents: read
