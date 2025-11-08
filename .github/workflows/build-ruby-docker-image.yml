@@ -1,25 +1,10 @@
 name: build-ruby-docker-image
 
 on:
-  workflow_call:
-    inputs:
-      ruby-version:
-        type: string
-        required: true
-      debian-version:
-        type: string
-        required: true
-      bundler-version:
-        type: string
-        required: false
-        default: ""
-      ephemeral:
-        type: boolean
-        required: false
-        default: false
-    outputs:
-      docker-image-tag:
-        value: ${{ jobs.build.outputs.docker-image-tag }}
+  push:
+    paths:
+      - '.github/workflows/build-ruby-docker-image.yml'
+      - '.dockerdev/ruby/**/*'
 
 permissions:
   contents: read
@@ -28,12 +13,12 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      RUBY_VERSION: "${{ inputs.ruby-version }}"
-      DEBIAN_VERSION: "${{ inputs.debian-version }}"
-      BUNDLER_VERSION: "${{ inputs.bundler-version }}"
-    outputs:
-      docker-image-tag: ${{ steps.docker-image-tag.outputs.tag }}
+    strategy:
+      matrix:
+        include:
+          - ruby-version: 3.2.0
+            debian-version: bullseye
+            bundler-version: 2.4.1
     steps:
       - uses: actions/checkout@v4
 
@@ -46,28 +31,17 @@ jobs:
 
       - uses: docker/setup-buildx-action@v3
 
-      - name: Generate docker image tag
-        id: docker-image-tag
-        run: |
-          if [ "${{ inputs.ephemeral }}" = "false" ]; then
-            tag="${RUBY_VERSION}"
-          else
-            tag="${RUBY_VERSION}-${{ github.sha }}"
-          fi
-          echo "tag=$tag" >> $GITHUB_OUTPUT
-
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: ./.docker/ruby
           build-args: |
-            RUBY_VERSION=${{ env.RUBY_VERSION }}
-            DEBIAN_VERSION=${{ env.DEBIAN_VERSION }}
-            BUNDLER_VERSION=${{ env.BUNDLER_VERSION }}
+            RUBY_VERSION=${{ matrix.ruby-version }}
+            DEBIAN_VERSION=${{ matrix.debian-version }}
+            BUNDLER_VERSION=${{ matrix.bundler-version }}
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/ruby:${{ steps.docker-image-tag.outputs.tag }}
+          tags: ghcr.io/${{ github.repository_owner }}/ruby:${{ matrix.ruby-version }}
           cache-from: |
-            type=registry,ref=ghcr.io/${{ github.repository_owner }}/ruby:${{ steps.docker-image-tag.outputs.tag }}-build-cache
-            type=registry,ref=ghcr.io/${{ github.repository_owner }}/ruby:${{ env.RUBY_VERSION }}-build-cache
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/ruby:${{ matrix.ruby-version }}-build-cache
           cache-to: |
-            type=registry,ref=ghcr.io/${{ github.repository_owner }}/ruby:${{ steps.docker-image-tag.outputs.tag }}-build-cache,mode=max
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/ruby:${{ matrix.ruby-version }}-build-cache,mode=max
