@@ -42,6 +42,9 @@ jobs:
       image: ghcr.io/${{ github.repository_owner }}/gaco3-r01:${{ github.sha }}
       env:
         MYSQL_USER: rails_app_user
+        RAILS_ENV: test
+        AWS_ACCESS_KEY_ID: dummy
+        AWS_SECRET_ACCESS_KEY: dummy
     services:
       mysql_test:
         image: mysql:8.0
@@ -62,5 +65,13 @@ jobs:
           key: ${{ runner.os }}-r01-bundle-${{ hashFiles('r01/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-r01-bundle-
+      - name: Setup bundle
+        run: |
+          bundle config set without 'development'
+          bundle config set deployment 'false'
+      - name: Install gems
+        run: bundle install --jobs 4 --retry 3
+      - name: Migrate DB
+        run: bundle exec rake db:migrate
       - name: Run RSpec
-        run: make rspec
+        run: bundle exec rspec
