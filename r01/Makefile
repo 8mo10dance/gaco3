@@ -14,7 +14,6 @@ install-gems: setup
 	bundle install --jobs 4 --retry 3
 
 setup:
-	bundle config set path 'vendor/bundle'
 	bundle config set without 'development'
 	bundle config set deployment 'false'
 
