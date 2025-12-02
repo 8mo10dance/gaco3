@@ -7,3 +7,9 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 WORKDIR /rails
+
+COPY Gemfile Gemfile.lock ./
+
+RUN bundle config set without 'development' && \
+    bundle config set deployment 'false' && \
+    bundle install --jobs 4 --retry 3

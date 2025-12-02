@@ -58,19 +58,6 @@ jobs:
         options: --health-cmd="mysqladmin ping -h localhost --silent" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v4
-      - name: Cache bundle
-        uses: actions/cache@v4
-        with:
-          path: r01/vendor/bundle
-          key: ${{ runner.os }}-r01-bundle-${{ hashFiles('r01/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-r01-bundle-
-      - name: Setup bundle
-        run: |
-          bundle config set without 'development'
-          bundle config set deployment 'false'
-      - name: Install gems
-        run: bundle install --jobs 4 --retry 3
       - name: Migrate DB
         run: bundle exec rake db:migrate
       - name: Run RSpec
