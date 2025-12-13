@@ -1,6 +1,6 @@
 # Rails アプリケーション作成用の環境構築
 
-Dagger shell を使って `rails new` する。
+Makefile を使って `rails new` する。
 
 1. Dockerfile を作成する
 
@@ -43,27 +43,32 @@ gem "concurrent-ruby", "1.3.4"
 touch Gemfile.lock
 ```
 
-3. rails new するための dagger スクリプトを作成する
+3. rails new するための Makefile を作成する
 
-```shell:dagger.sh
-#!/usr/bin/env bash
+```makefile
+RUBY_VERSION      ?= 2.7.8
+APP_NAME          ?= myapp
+RAILS_NEW_OPTIONS ?= --skip-javascript --skip-test
 
-set -eu
+IMAGE_NAME        ?= rails-new:$(RUBY_VERSION)
+WORKDIR           := $(CURDIR)
 
-RUBY_VERSION=${RUBY_VERSION:-}
-APP_NAME=${APP_NAME:-myapp}
-RAILS_NEW_OPTIONS=${RAILS_NEW_OPTIONS:-}
+.PHONY: build new
 
-echo "Ruby Version: ${RUBY_VERSION}"
-echo "To run: rails new ${APP_NAME} ${RAILS_NEW_OPTIONS}"
+new: build
+	@echo "To run: rails new $(APP_NAME) $(RAILS_NEW_OPTIONS)"
+	docker run --rm \
+		-v "$(WORKDIR)":/ruby \
+		-w /ruby \
+		$(IMAGE_NAME) \
+		rails new /ruby/$(APP_NAME) $(RAILS_NEW_OPTIONS)
 
-dagger shell <<EOF
-container |
-  build . --build-args RUBY_VERSION=${RUBY_VERSION} |
-  with-exec -- rails new /ruby/${APP_NAME} ${RAILS_NEW_OPTIONS} |
-  directory /ruby/${APP_NAME} |
-  export ./${APP_NAME}
-EOF
+build: Dockerfile
+	@echo "Ruby Version: $(RUBY_VERSION)"
+	docker build \
+		--build-arg RUBY_VERSION=$(RUBY_VERSION) \
+		-t $(IMAGE_NAME) \
+		.
 ```
 
 ```shell:.envrc
@@ -74,5 +79,6 @@ export RAILS_NEW_OPTIONS='--skip-javascript --skip-test'
 4. 以下のコマンドを実行して、Rails アプリケーションを作成する。
 
 ```bash
-./dagger.sh
+make build
+make new
 ```
