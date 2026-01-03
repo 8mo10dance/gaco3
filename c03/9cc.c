@@ -22,9 +22,16 @@ struct Token {
 
 Token *token;
 
-void error(char *fmt, ...) {
+char *user_input;
+
+void error_at(char *loc, char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
+
+  int pos = loc - user_input;
+  fprintf(stderr, "%s\n", user_input);
+  fprintf(stderr, "%*s", pos, "");
+  fprintf(stderr, "^ ");
   vfprintf(stderr, fmt, ap);
   fprintf(stderr, "\n");
   exit(1);
@@ -41,7 +48,7 @@ bool consume(char op) {
 
 void expect(char op) {
   if (token->kind != TK_RESERVED || token->str[0] != op) {
-    error("'%c'ではありません", op);
+    error_at(token->str, "'%c'ではありません", op);
   }
 
   token = token->next;
@@ -49,7 +56,7 @@ void expect(char op) {
 
 int expect_number() {
   if (token->kind != TK_NUM) {
-    error("数はありません");
+    error_at(token->str, "数ではありません");
   }
 
   int val = token->val;
@@ -69,7 +76,8 @@ Token *new_token(TokenKind kind, Token *cur, char *str) {
   return tok;
 }
 
-Token *tokenize(char *p) {
+Token *tokenize() {
+  char *p = user_input;
   Token head;
   head.next = NULL;
   Token *cur = &head;
@@ -90,7 +98,7 @@ Token *tokenize(char *p) {
       continue;
     }
 
-    error("トークナイズできません");
+    error_at(p, "トークナイズできません");
   }
   new_token(TK_EOF, cur, p);
   return head.next;
@@ -102,7 +110,8 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  token = tokenize(argv[1]);
+  user_input = argv[1];
+  token = tokenize();
 
   printf(".intel_syntax noprefix\n");
   printf(".globl main\n");
