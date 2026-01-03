@@ -6,7 +6,7 @@ RAILS_PORT=3000
 
 echo "Waiting for Rails server to start..."
 for i in $(seq 1 10); do
-  if curl -s http://localhost:$RAILS_PORT/up > /dev/null; then
+  if curl -s http://localhost:$RAILS_PORT/up >/dev/null; then
     echo "Rails server started."
     break
   fi
@@ -14,7 +14,7 @@ for i in $(seq 1 10); do
   sleep 2
 done
 
-if ! curl -s http://localhost:$RAILS_PORT/up > /dev/null; then
+if ! curl -s http://localhost:$RAILS_PORT/up >/dev/null; then
   echo "Error: Rails server did not start within the expected time."
   exit 1
 fi
