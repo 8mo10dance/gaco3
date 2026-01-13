@@ -221,6 +221,9 @@ int main(int argc, char **argv) {
   user_input = argv[1];
   token = tokenize();
   Node *node = expr();
+  if (!at_eof()) {
+    error_at(token->str, "余分なトークンがあります");
+  }
 
   printf(".intel_syntax noprefix\n");
   printf(".globl main\n");
