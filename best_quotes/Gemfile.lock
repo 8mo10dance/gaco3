@@ -1,0 +1,13 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    rulers (0.0.1)
+
+PLATFORMS
+  x86_64-linux
+
+DEPENDENCIES
+  rulers
+
+BUNDLED WITH
+   2.4.10
