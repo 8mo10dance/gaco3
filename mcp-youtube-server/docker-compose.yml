@@ -1,0 +1,7 @@
+services:
+  app:
+    build: .
+    container_name: mcp-youtube-server
+    env_file:
+      - .env
+    command: node index.js
