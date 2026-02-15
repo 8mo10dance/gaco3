@@ -35,3 +35,16 @@ $ aws s3 ls --endpoint-url=http://localhost:4566 --profile localstack s3://micro
 ```bash
 $ aws lambda --endpoint-url=http://localhost:4566 --profile localstack invoke --function-name my_lambda_function result.log
 ```
+
+## Playwright E2E テスト
+
+```bash
+# 依存関係インストール
+$ cd r01/e2e
+$ npm install
+
+# 別ターミナルで r01 を起動後に実行
+$ npm test
+```
+
+必要に応じて接続先は `PLAYWRIGHT_BASE_URL` で変更できます。
