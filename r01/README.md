@@ -40,7 +40,7 @@ $ aws lambda --endpoint-url=http://localhost:4566 --profile localstack invoke --
 
 ```bash
 # 依存関係インストール
-$ cd r01/e2e
+$ cd e2e
 $ npm install
 
 # ブラウザのインストール
