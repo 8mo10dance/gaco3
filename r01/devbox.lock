@@ -1,0 +1,74 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "github:NixOS/nixpkgs/nixpkgs-unstable": {
+      "last_modified": "2026-02-10T02:06:53Z",
+      "resolved": "github:NixOS/nixpkgs/49d75834011c94a120a9cb874ac1c4d8b7bfc767?lastModified=1770689213&narHash=sha256-N6JiSpfi0s8NjUTnjwo3c%2BYAmvYhCDzjCKCrTUC97xM%3D"
+    },
+    "ruby@3.2.2": {
+      "last_modified": "2024-01-14T03:55:27Z",
+      "plugin_version": "0.0.2",
+      "resolved": "github:NixOS/nixpkgs/dd5621df6dcb90122b50da5ec31c411a0de3e538#ruby_3_2",
+      "source": "devbox-search",
+      "version": "3.2.2",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/qr1qhf6x5k4j1apijs1hpml749ahz9fz-ruby-3.2.2",
+              "default": true
+            },
+            {
+              "name": "devdoc",
+              "path": "/nix/store/s8zpr6xz7sgf637mw8nxg3a50j3pr9qf-ruby-3.2.2-devdoc"
+            }
+          ],
+          "store_path": "/nix/store/qr1qhf6x5k4j1apijs1hpml749ahz9fz-ruby-3.2.2"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4j80nyc2rms2a5gb37qilmlvcn9id31i-ruby-3.2.2",
+              "default": true
+            },
+            {
+              "name": "devdoc",
+              "path": "/nix/store/6qcdxlds65xfcna29za7fyrsz49jf1h9-ruby-3.2.2-devdoc"
+            }
+          ],
+          "store_path": "/nix/store/4j80nyc2rms2a5gb37qilmlvcn9id31i-ruby-3.2.2"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/a4jd680azf2bsqfm09l3i1fz8zvwnmpj-ruby-3.2.2",
+              "default": true
+            },
+            {
+              "name": "devdoc",
+              "path": "/nix/store/a12akilsaymqb8p946364k1r8fayz1a2-ruby-3.2.2-devdoc"
+            }
+          ],
+          "store_path": "/nix/store/a4jd680azf2bsqfm09l3i1fz8zvwnmpj-ruby-3.2.2"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4mm3lyj1mmqx25diw044hciai541qcic-ruby-3.2.2",
+              "default": true
+            },
+            {
+              "name": "devdoc",
+              "path": "/nix/store/iz28ibg0gb3g5r149b34blnrap5jbr6n-ruby-3.2.2-devdoc"
+            }
+          ],
+          "store_path": "/nix/store/4mm3lyj1mmqx25diw044hciai541qcic-ruby-3.2.2"
+        }
+      }
+    }
+  }
+}
