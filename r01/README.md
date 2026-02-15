@@ -43,6 +43,12 @@ $ aws lambda --endpoint-url=http://localhost:4566 --profile localstack invoke --
 $ cd r01/e2e
 $ npm install
 
+# ブラウザのインストール
+$ npx playwright install
+
+# システム依存ライブラリのインストール
+$ npx playwright install-deps
+
 # 別ターミナルで r01 を起動後に実行
 $ npm test
 ```
