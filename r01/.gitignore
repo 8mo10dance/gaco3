@@ -41,3 +41,5 @@ config/environments/*.local.yml
 tmp/
 
 node_modules
+
+test-results
