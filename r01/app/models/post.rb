@@ -33,7 +33,7 @@ class Post < ApplicationRecord
       Aws::S3::Bucket.new(
         Settings.aws.s3.bucket,
         region: Settings.aws.region,
-        endpoint: 'http://localstack:4566',
+        endpoint: Settings.aws.endpoint,
         force_path_style: true
       )
   end
