@@ -23,15 +23,16 @@ services:
     depends_on:
       - mysql
       - mysql_test
-  localstack:
-    image: localstack/localstack:2.3.2
+      - floci
+  floci:
+    image: floci/floci:latest-compat
     ports:
       - '4566:4566'
     environment:
-      SERVICES: s3
-      DEBUG: 1
+      QUARKUS_LOG_LEVEL: DEBUG
     volumes:
-      - "./localstack/init:/etc/localstack/init"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "./floci/init:/etc/floci/init"
   mysql:
     <<: *mysql
     ports:
