@@ -248,6 +248,60 @@ nix --extra-experimental-features "nix-command flakes" <command>
 
 ---
 
+### 6.3 Devbox / Nix の容量を掃除したい
+
+Devbox は裏側で Nix store を使うため、容量の掃除は Nix 側の GC（garbage collection）で行う。
+Devbox 自体に `devbox gc` が無いバージョンでは、次のコマンドを使う。
+
+まず確認だけ：
+
+```bash
+nix store gc --dry-run
+```
+
+実際に消す：
+
+```bash
+nix store gc
+```
+
+`nix store gc` が動かない環境では、旧CLIのこれを使う：
+
+```bash
+nix-store --gc
+```
+
+削除対象の確認だけなら：
+
+```bash
+nix-store --gc --print-dead
+```
+
+指定した容量まで消す：
+
+```bash
+nix store gc --max 5G
+```
+
+古い profile generation が残っていると回収できないことがある。
+より強めに掃除したい場合は、古い generation を消してから GC する。
+
+```bash
+nix profile wipe-history
+nix store gc
+```
+
+旧CLIで強めに掃除するならこれでもよい：
+
+```bash
+nix-collect-garbage -d
+```
+
+> 今の Devbox プロジェクトや `devbox global` で参照中のパッケージは消えない。
+> 不要なパッケージは先に `devbox rm <package>` や `devbox global rm <package>` で外してから GC する。
+
+---
+
 ## 7. 運用のおすすめテンプレ
 
 ### 7.1 プロジェクト運用
@@ -290,5 +344,10 @@ devbox shell
 devbox global add ripgrep
 devbox global list
 devbox global path
-```
 
+# cleanup
+nix store gc --dry-run
+nix store gc
+nix profile wipe-history
+nix-collect-garbage -d
+```
