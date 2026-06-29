@@ -136,6 +136,12 @@ devbox run test
 devbox global add jq ripgrep fd
 ```
 
+Task も global に入れておくと、プロジェクトごとの定型操作を `task` で統一しやすい。
+
+```bash
+devbox global add go-task
+```
+
 一覧：
 
 ```bash
@@ -149,6 +155,12 @@ devbox global path
 ```
 
 > `~/.config` に無いことがあるのは正常。`global` は **XDG_DATA_HOME 配下**に作られることが多い。
+
+シェル起動時に global の PATH を通す：
+
+```bash
+eval "$(devbox global shellenv)"
+```
 
 ---
 
@@ -175,7 +187,7 @@ git commit -m "Add devbox environment"
 
 ### 5.2 グローバル環境を Git 管理したい
 
-やり方は2つ。
+やり方は3つ。
 
 #### A) devbox global push/pull（同期をdevboxに任せる）
 
@@ -213,6 +225,17 @@ ln -sf ~/dotfiles/devbox/devbox.json "$(devbox global path)/devbox.json"
 
 - **XDG_DATA_HOME を変えなくて済む**（他アプリへの副作用がない）。
 - dotfiles と一緒に `devbox.json` を管理できる。
+
+#### C) chezmoi で管理する
+
+chezmoi を使っているなら、global の `devbox.json` を chezmoi 管理にするのもよい。
+
+管理候補：
+
+- `~/.local/share/devbox/global/default/devbox.json`
+- `.bashrc` / `.zshrc` などの `eval "$(devbox global shellenv)"` を書くシェル設定
+
+`devbox.lock` は、global 環境まで厳密に固定したい場合だけ管理する。
 
 ---
 
@@ -328,6 +351,46 @@ devbox shell
 
 - よく使うCLI：`devbox global add` で管理
 - 共有したいなら `push/pull`、dotfiles統合なら symlink
+- chezmoi を使うなら global の `devbox.json` とシェル設定を管理する
+
+### 7.3 Task / Docker との役割分担
+
+おすすめの分担：
+
+- Devbox：Ruby, Node.js, AWS CLI, Task などの開発ツール・ランタイム
+- Task：`bundle install` や `docker compose` 呼び出しなどのタスク実行
+- Docker：LocalStack, MySQL, Redis, OpenSearch などの常駐サービス
+
+Rails や Node は Devbox 上で動かし、DB や LocalStack のようなサービスだけ Docker に寄せると、ローカル実行とサービス管理を分けやすい。
+
+Task で dip の interaction を置き換える例：
+
+```yaml
+version: "3"
+
+tasks:
+  bundle:
+    cmds:
+      - docker compose run --rm rails bundle {{.CLI_ARGS}}
+```
+
+実行：
+
+```bash
+task bundle -- install
+```
+
+`task bundle install` は `install` を別タスクとして解釈するので、引数は `--` の後ろに渡す。
+
+### 7.4 Dockerfile 生成
+
+Devbox から Dockerfile を生成できる。
+
+```bash
+devbox generate dockerfile
+```
+
+ローカルは Devbox、CI や配布用は Docker という使い分けをしたいときに便利。
 
 ---
 
@@ -342,12 +405,18 @@ devbox shell
 
 # global
 devbox global add ripgrep
+devbox global add go-task
 devbox global list
 devbox global path
+eval "$(devbox global shellenv)"
+
+# dockerfile
+devbox generate dockerfile
 
 # cleanup
 nix store gc --dry-run
 nix store gc
+nix-store --gc
 nix profile wipe-history
 nix-collect-garbage -d
 ```
