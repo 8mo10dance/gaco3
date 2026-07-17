@@ -10,7 +10,9 @@ Direction = Struct.new(:compass) do
   }
   COMPASS_SIZE = 4
   TURN_OFFSET = {
+    'F' => 0,
     'L' => 1,
+    'B' => 2,
     'R' => 3,
   }
   DELTA = [
@@ -35,8 +37,8 @@ Direction = Struct.new(:compass) do
 end
 
 Point = Struct.new(:x, :y) do
-  def move(direction)
-    dx, dy = direction.delta
+  def move(direction, len = 1)
+    dx, dy = direction.delta.map { |x| x * len }
     self.class.new(x + dx, y + dy)
   end
 
@@ -65,23 +67,34 @@ end
 @point = Point.new(sx, sy)
 @grid = Grid.new(grid)
 
-def walkable?(d)
+def walkable?(d, l = 1)
   direction = @direction.turn(d)
-  next_point = @point.move(direction)
+  next_point = @point.move(direction, l)
   @grid.include?(next_point) && @grid.empty?(next_point)
 end
 
-def walk!(d)
+def walk!(d, l = 1)
   @direction = @direction.turn(d)
-  @point = @point.move(@direction)
+  @point = @point.move(@direction, l)
+end
+
+def walk_until_block!(d)
+  @direction = @direction.turn(d)
+  while walkable?('F')
+    @point = @point.move(@direction)
+  end
 end
 
 n.times do
-  d = gets.chomp
-  if walkable?(d)
-    walk!(d)
+  d, l = gets.chomp.split
+  l = l.to_i
+
+  if walkable?(d, l)
+    walk!(d, l)
     puts @point
   else
+    walk_until_block!(d)
+    puts @point
     puts 'Stop'
     break
   end
