@@ -59,11 +59,20 @@ class Grid
   def empty?(point)
     @grid[point.y][point.x] == '.'
   end
+
+  def fill!(point)
+    @grid[point.y][point.x] = '*'
+  end
+
+  def display
+    @grid.each { |row| puts row.join }
+  end
 end
 
 @direction = Direction.from_compass('N')
 @point = Point.new(sx, sy)
 @grid = Grid.new(grid)
+@grid.fill!(@point)
 
 def walkable?(direction)
   next_point = @point.move(direction)
@@ -73,6 +82,7 @@ end
 def walk!(direction)
   @direction = direction
   @point = @point.move(@direction)
+  @grid.fill!(@point)
 end
 
 n.times do
@@ -89,10 +99,7 @@ n.times do
       break
     end
   end
-
-  puts @point
-  if is_stop
-    puts 'Stop'
-    break
-  end
+  break if is_stop
 end
+
+@grid.display
