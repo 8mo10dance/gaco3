@@ -65,23 +65,33 @@ end
 @point = Point.new(sx, sy)
 @grid = Grid.new(grid)
 
-def walkable?(d)
-  direction = @direction.turn(d)
+def walkable?(direction)
   next_point = @point.move(direction)
   @grid.include?(next_point) && @grid.empty?(next_point)
 end
 
-def walk!(d)
-  @direction = @direction.turn(d)
+def walk!(direction)
+  @direction = direction
   @point = @point.move(@direction)
 end
 
 n.times do
-  d = gets.chomp
-  if walkable?(d)
-    walk!(d)
-    puts @point
-  else
+  d, l = gets.chomp.split
+  l = l.to_i
+
+  direction = @direction.turn(d)
+  is_stop = false
+  l.times do
+    if walkable?(direction)
+      walk!(direction)
+    else
+      is_stop = true
+      break
+    end
+  end
+
+  puts @point
+  if is_stop
     puts 'Stop'
     break
   end
