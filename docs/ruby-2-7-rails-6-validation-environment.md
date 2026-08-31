@@ -10,7 +10,7 @@ rails new するだけの Docker 環境を作る。
 
 ホストに直接入れてもいいが、古いバージョンの Ruby / Rails だと入らなかったりするので、 Docker を使うほうがおすすめ。
 
-[Rails アプリケーション作成用の環境構築](./Rails%20アプリケーション作成用の環境構築.md) を参照のこと。
+[Rails アプリケーション作成用の環境構築](./rails-application-setup.md) を参照のこと。
 ただし、Gemfile には以下のように記述する。
 
 ```ruby

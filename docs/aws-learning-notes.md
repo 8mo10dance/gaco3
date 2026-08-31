@@ -35,7 +35,7 @@ Management Account
 
 ---
 
-# 2. Terraform を使った AWS 学習
+## 2. Terraform を使った AWS 学習
 
 AWS コンソールだけで構築すると、現在の設定を AI に見せたり、Git で管理したりするのが難しい。
 
@@ -67,7 +67,7 @@ AWS Console
 
 ---
 
-# 3. AWS CLI と Terraform の認証
+## 3. AWS CLI と Terraform の認証
 
 Terraform は AWS Provider を通して AWS API にアクセスする。
 
@@ -99,7 +99,7 @@ aws --version
 
 ---
 
-# 4. Console → Terraform
+## 4. Console → Terraform
 
 AWS コンソールで実験してから Terraform 化することもできる。
 
@@ -146,7 +146,7 @@ Terraform完全生成
 
 ---
 
-# 5. Terraform 化の基本フロー
+## 5. Terraform 化の基本フロー
 
 今後は次のようなワークフローを想定する。
 
@@ -182,7 +182,7 @@ terraform apply
 
 ---
 
-# 6. Floci
+## 6. Floci
 
 Floci を使うと、一部 AWS API をローカルでエミュレートできる。
 
@@ -221,7 +221,7 @@ terraform plan
 
 ---
 
-# 7. S3 静的サイト
+## 7. S3 静的サイト
 
 最初の実験として S3 に `index.html` を配置し、Static Website Hosting を有効にした。
 
@@ -266,7 +266,7 @@ import {
 
 ---
 
-# 8. 静的サイトジェネレーター + S3
+## 8. 静的サイトジェネレーター + S3
 
 Astro、Hugo、Jekyll などの静的サイトジェネレーターを使う場合、
 
@@ -314,7 +314,7 @@ aws s3 sync
 
 ---
 
-# 9. CloudFront
+## 9. CloudFront
 
 S3 の前に CloudFront を置ける。
 
@@ -338,7 +338,7 @@ https://xxxxxxxx.cloudfront.net
 
 ---
 
-# 10. OAC
+## 10. OAC
 
 OAC は **Origin Access Control**。
 
@@ -390,7 +390,7 @@ S3
 
 ---
 
-# 11. CloudFront と ALB
+## 11. CloudFront と ALB
 
 CloudFront と ALB は役割が違う。
 
@@ -448,7 +448,7 @@ Browser → CloudFront
 
 ---
 
-# 12. EC2
+## 12. EC2
 
 まず EC2 上で Docker コンテナを動かすところまで実験した。
 
@@ -476,7 +476,7 @@ Default VPC
 
 ---
 
-# 13. Security Group
+## 13. Security Group
 
 EC2 のアプリケーションが例えば `8080` で待ち受けている場合、直接公開するなら、
 
@@ -524,7 +524,7 @@ Internet → ALB → EC2  ○
 
 ---
 
-# 14. ECS
+## 14. ECS
 
 ECS = **Elastic Container Service**。
 
@@ -599,7 +599,7 @@ Task が死んだ場合、新しい Task を起動して desired count を維持
 
 ---
 
-# 15. ECS on EC2 と Fargate
+## 15. ECS on EC2 と Fargate
 
 ECS と Fargate は競合するものではない。
 
@@ -643,14 +643,15 @@ EC2 の管理を AWS に任せられる。
 
 つまり、
 
-> ECS は Docker コンテナの管理者  
+> ECS は Docker コンテナの管理者
+>
 > Fargate は EC2 の代わりになる実行環境
 
 と考えると分かりやすい。
 
 ---
 
-# 16. 現在の構成からの発展
+## 16. 現在の構成からの発展
 
 現在：
 
@@ -726,7 +727,7 @@ Internet → CloudFront ───┤
 
 ---
 
-# 17. 今後の学習順序
+## 17. 今後の学習順序
 
 現時点では ECS を急いで導入する必要はない。
 

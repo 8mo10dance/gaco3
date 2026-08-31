@@ -16,7 +16,7 @@
 
 ## 2. 相対方向も整数
 
-``` ruby
+```ruby
 REL = {
   'F' => 0,
   'L' => 1,
@@ -25,7 +25,7 @@ REL = {
 }
 ```
 
-``` ruby
+```ruby
 dir = (current + REL[action]) % 4
 ```
 
@@ -33,7 +33,7 @@ dir = (current + REL[action]) % 4
 
 ## 3. ベクトルを持つ
 
-``` ruby
+```ruby
 DELTA = [
   [0, -1],
   [1, 0],
@@ -46,7 +46,7 @@ DELTA = [
 
 ## 4. Point は値オブジェクト
 
-``` ruby
+```ruby
 Point = Struct.new(:x, :y) do
   def initialize(...)
     super
@@ -64,7 +64,7 @@ end
 
 ## 5. Direction も値オブジェクト
 
-``` ruby
+```ruby
 class Direction
   DELTA = [
     [0, -1],
@@ -96,7 +96,7 @@ end
 
 ## 7. 不変オブジェクト
 
-``` ruby
+```ruby
 point = point.move(dx, dy)
 direction = direction.right
 ```

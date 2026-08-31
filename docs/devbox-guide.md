@@ -336,7 +336,7 @@ nix-collect-garbage -d
 
 例：
 
-```md
+````md
 ## Dev Setup
 
 ```bash
@@ -345,7 +345,7 @@ nix-collect-garbage -d
 
 devbox shell
 ```
-```
+````
 
 ### 7.2 グローバル運用
 
