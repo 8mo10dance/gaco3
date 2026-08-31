@@ -25,7 +25,7 @@ description: Provide a supplied learning note as a new docs/ Markdown document, 
 4. 次をリポジトリルートで実行する。
 
    ```bash
-   python3 .agents/skills/add-learning-document/scripts/validate_docs.py
+   npm run validate:docs
    git diff --check
    ```
 
