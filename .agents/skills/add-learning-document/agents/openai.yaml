@@ -1,0 +1,7 @@
+interface:
+  display_name: "学習ドキュメント追加"
+  short_description: "学習メモを docs に追加し索引と品質を整える"
+  default_prompt: "Use $add-learning-document to add this learning note to docs/."
+
+policy:
+  allow_implicit_invocation: true

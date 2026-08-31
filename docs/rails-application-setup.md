@@ -4,7 +4,7 @@ Makefile を使って `rails new` する。
 
 1. Dockerfile を作成する
 
-```Dockerfile:Dockerfile
+```dockerfile
 ARG RUBY_VERSION
 
 FROM ruby:$RUBY_VERSION
@@ -24,7 +24,7 @@ CMD ["/usr/bin/bash"]
 
 2. Gemfile を作成する
 
-```ruby:Gemfile
+```ruby
 # frozen_string_literal: true
 
 source "https://rubygems.org"
@@ -71,7 +71,7 @@ build: Dockerfile
 		.
 ```
 
-```shell:.envrc
+```bash
 export RUBY_VERSION=2.7.8
 export RAILS_NEW_OPTIONS='--skip-javascript --skip-test'
 ```

@@ -10,7 +10,7 @@ I started with a simple question:
 At first, I thought the answer was about syntax. Then I realized it was
 about **abstraction**.
 
-------------------------------------------------------------------------
+---
 
 ## S-expressions and Ruby-like Syntax
 
@@ -28,14 +28,14 @@ Every expression follows the same rule.
 
 Ruby-like syntax feels closer to English.
 
-``` ruby
+```ruby
 user.posts.first.author.name
 I.want_to(:learn, :english)
 ```
 
 It reads almost like natural language.
 
-------------------------------------------------------------------------
+---
 
 ## A New Distinction
 
@@ -55,7 +55,7 @@ abstraction differently.
     formed in the mind.
 -   Abstraction is primarily a cognitive activity.
 
-------------------------------------------------------------------------
+---
 
 ## The Key Insight
 
@@ -72,7 +72,7 @@ Or, more precisely:
 
 Their different purposes explain why their abstractions look different.
 
-------------------------------------------------------------------------
+---
 
 ## Why Ruby Feels More Natural
 
@@ -88,7 +88,7 @@ Examples:
 
 This makes Ruby-like syntax feel close to natural language.
 
-------------------------------------------------------------------------
+---
 
 ## Why I Still Prefer S-expressions
 
@@ -107,7 +107,7 @@ I do not love S-expressions because they resemble human language.
 
 I love them because they reveal structure directly.
 
-------------------------------------------------------------------------
+---
 
 ## My Current Conclusion
 
@@ -129,7 +129,7 @@ But if I have to choose, I will always choose S-expressions.
 
 :)
 
-------------------------------------------------------------------------
+---
 
 ## English Phrases to Remember
 

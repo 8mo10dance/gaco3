@@ -4,7 +4,7 @@
 
 ### `include?` は範囲を展開しない
 
-``` ruby
+```ruby
 (1..10).include?(10)
 ```
 
@@ -15,7 +15,7 @@
 
 ### `cover?` との違い
 
-``` ruby
+```ruby
 ("a".."z").include?("cc") # => false
 ("a".."z").cover?("cc")   # => true
 ```
@@ -27,13 +27,13 @@
 
 作ることはできる。
 
-``` ruby
+```ruby
 (1.0..2.0)
 ```
 
 ただし
 
-``` ruby
+```ruby
 (1.0..2.0).each
 ```
 
@@ -43,13 +43,13 @@
 
 列挙したい場合は
 
-``` ruby
+```ruby
 (1.0..2.0).step(0.1)
 ```
 
 を使う。
 
-------------------------------------------------------------------------
+---
 
 ## Enumerable
 
@@ -60,7 +60,7 @@
 
 ### inject + with_index
 
-``` ruby
+```ruby
 array.each_with_index.inject(0) do |acc, (x, i)|
   acc + x * i
 end
@@ -74,7 +74,7 @@ end
 
 ### sort_by
 
-``` ruby
+```ruby
 users.sort_by { |u| u.age }
 users.sort_by { |u| [u.age, u.name] }
 users.sort_by { |u| -u.score }
@@ -82,19 +82,19 @@ users.sort_by { |u| -u.score }
 
 ### tally
 
-``` ruby
+```ruby
 arr.tally
 ```
 
 出現回数を集計する。
 
-------------------------------------------------------------------------
+---
 
 ## Array
 
 ### 先頭追加
 
-``` ruby
+```ruby
 arr.unshift(x)
 arr.prepend(x)
 ```
@@ -105,7 +105,7 @@ arr.prepend(x)
 
 代わりに
 
-``` ruby
+```ruby
 arr[1..]
 arr.drop(1)
 ```
@@ -114,7 +114,7 @@ arr.drop(1)
 
 内部で Hash を使うため平均 `O(n)`。
 
-``` ruby
+```ruby
 arr.uniq.size
 ```
 
@@ -122,51 +122,51 @@ arr.uniq.size
 
 ### 配列 → Set
 
-``` ruby
+```ruby
 require "set"
 
 arr.to_set
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Hash
 
 ### カウンタ
 
-``` ruby
+```ruby
 Hash.new(0)
 ```
 
 ### 可変オブジェクト
 
-``` ruby
+```ruby
 Hash.new { |h, k| h[k] = [] }
 Hash.new { |h, k| h[k] = Set.new }
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Proc / Lambda
 
-``` ruby
+```ruby
 f = ->(x) { x * 2 }
 f.call(3)
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Float
 
 ### 絶対値
 
-``` ruby
+```ruby
 x.abs
 ```
 
 ### BigDecimal
 
-``` ruby
+```ruby
 require "bigdecimal/util"
 
 "1.23".to_d
@@ -180,7 +180,7 @@ require "bigdecimal/util"
 
 約15〜16桁の精度。 `2^53` まで整数を正確に表現できる。
 
-------------------------------------------------------------------------
+---
 
 ## Deque
 
@@ -195,19 +195,19 @@ Ruby 標準にはない。
 -   unshift は「head を戻してから書く」
 -   `head == tail` 問題を避けるため `size` を持つ
 
-------------------------------------------------------------------------
+---
 
 ## その他
 
 ### トップレベルのインスタンス変数
 
-``` ruby
+```ruby
 @foo = 1
 ```
 
 ### 正規表現
 
-``` ruby
+```ruby
 /^[abc]/
 ```
 
@@ -215,7 +215,7 @@ Ruby 標準にはない。
 
 最頻出文字（複数可）をすべて削除して出力する。
 
-------------------------------------------------------------------------
+---
 
 ## 数学ライブラリの設計
 
@@ -223,7 +223,7 @@ Ruby 標準にはない。
 
 `Struct` は「データを持つだけ」のオブジェクトを簡潔に定義するための仕組み。
 
-``` ruby
+```ruby
 Point = Struct.new(:x, :y)
 ```
 
@@ -254,7 +254,7 @@ Point = Struct.new(:x, :y)
 
 #### 演算
 
-``` ruby
+```ruby
 v + w
 v - w
 v.dot(w)
@@ -266,7 +266,7 @@ m * n
 
 `vector * vector` は意味が複数あるので、
 
-``` ruby
+```ruby
 v.dot(w)
 v.hadamard(w)
 v.outer(w)
@@ -278,7 +278,7 @@ v.outer(w)
 
 `Enumerable` は抽象クラスではなく **Module**。
 
-``` ruby
+```ruby
 class Vector
   include Enumerable
 
@@ -292,7 +292,7 @@ end
 
 ほぼ
 
-``` ruby
+```ruby
 def each
   ...
 end
@@ -318,7 +318,7 @@ end
 
 #### each のRuby流
 
-``` ruby
+```ruby
 def each
   return enum_for(__method__) unless block_given?
 
@@ -330,13 +330,13 @@ end
 
 #### Enumerable は型を保存しない
 
-``` ruby
+```ruby
 v.map { |x| x * 2 }
 ```
 
 は
 
-``` ruby
+```ruby
 Array
 ```
 
@@ -344,7 +344,7 @@ Array
 
 `Vector` にしたいなら
 
-``` ruby
+```ruby
 def map(&block)
   Vector.new(super)
 end
@@ -372,7 +372,7 @@ end
 
 `Vector` は自分で
 
-``` ruby
+```ruby
 def ==(other)
   ...
 end
@@ -384,7 +384,7 @@ end
 
 `Comparable` は
 
-``` ruby
+```ruby
 include Comparable
 
 def <=>(other)
@@ -412,7 +412,7 @@ end
 
 "is-a"
 
-``` text
+```text
 Dog is Animal
 ```
 
@@ -420,7 +420,7 @@ Dog is Animal
 
 "can-do"
 
-``` text
+```text
 Tree can enumerate
 Vector can enumerate
 ```
