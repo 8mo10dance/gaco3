@@ -236,6 +236,115 @@ repeat          遷移をn回合成する仕組み
 
 行列累乗は大きな `n` に対して二分累乗を使える。一方、一般のブラックボックスな関数は、同じ関数を二乗しても実行時には内部で元の処理を2回行うため、関数合成だけで計算量が `O(log n)` になるわけではない。この違いは、行列のように「合成結果を小さな値として計算できる表現」を使う利点である。
 
+## Scheme での実装例
+
+同じ考え方は Scheme でも、単位元と二項演算を一つの値にまとめることで表現できる。ここではモノイドをリストで表し、`monoid-empty` と `monoid-append` でそれぞれを取り出す。
+
+```scheme
+(define (make-monoid empty append)
+  (list empty append))
+
+(define (monoid-empty monoid)
+  (car monoid))
+
+(define (monoid-append monoid)
+  (cadr monoid))
+```
+
+例えば、整数の乗法は単位元 `1` と演算 `*` のモノイドになる。
+
+```scheme
+(define mul-monoid (make-monoid 1 *))
+```
+
+### 一般化された二分累乗
+
+`(monoid-pow monoid base n)` は、`base` を `n` 回結合した結果を返す。`n` は 0 以上の整数を想定する。累積値 `acc` について、`acc append base^i = x^n` という不変条件を保ちながら計算する。
+
+```scheme
+(define (monoid-pow monoid base n)
+  (define (iter acc base i)
+    (cond ((<= i 0) acc)
+          ((even? i)
+           (iter acc
+                 ((monoid-append monoid) base base)
+                 (/ i 2)))
+          (else
+           (iter ((monoid-append monoid) acc base)
+                 base
+                 (- i 1)))))
+  (iter (monoid-empty monoid) base n))
+
+(define (pow2 n)
+  (monoid-pow mul-monoid 2 n))
+
+(pow2 10) ; => 1024
+```
+
+指数が偶数なら底を自分自身と結合して指数を半分にし、奇数なら累積値に底を 1 回結合する。指数は偶数の反復で半減するため、結合演算の回数は `O(log n)` になる。`iter` は末尾再帰なので、末尾呼び出し最適化を行う処理系では反復の追加スタック使用量は一定である。
+
+### 行列モノイドによるフィボナッチ数
+
+正方行列は、行列積を演算、同じ大きさの単位行列を単位元とするモノイドになる。2×2 行列をリストとして表現する実装では、行列積と単位行列を次のように定義できる。
+
+```scheme
+(define (make-matrix rows)
+  (list (length rows) (length (car rows)) rows))
+
+(define (matrix-rows matrix)
+  (caddr matrix))
+
+(define (matrix-ref matrix ri ci)
+  (list-ref (list-ref (matrix-rows matrix) ri) ci))
+
+(define (unit-matrix size)
+  (make-matrix
+   (map (lambda (ri)
+          (map (lambda (ci) (if (= ri ci) 1 0)) (iota size)))
+        (iota size))))
+
+(define (compose-matrix m n)
+  (define (dot xs ys) (apply + (map * xs ys)))
+  (let ((n-cols (apply map list (matrix-rows n))))
+    (make-matrix
+     (map (lambda (m-row)
+            (map (lambda (n-col) (dot m-row n-col)) n-cols))
+          (matrix-rows m)))))
+
+(define (matrix-monoid size)
+  (make-monoid (unit-matrix size) compose-matrix))
+```
+
+フィボナッチ数を `F(0) = 0`, `F(1) = 1` とすると、次の恒等式が成り立つ。
+
+```text
+Q = [ 0  1 ]
+    [ 1  1 ]
+
+Q^n = [ F(n - 1)  F(n)   ]  （n >= 1）
+      [ F(n)      F(n + 1) ]
+```
+
+したがって、`Q^n` の `(0, 1)` 要素を取り出せば `F(n)` が得られる。
+
+```scheme
+(define (list->matrix rows)
+  (make-matrix rows))
+
+(define (fib n)
+  (let ((fib-matrix
+         (monoid-pow (matrix-monoid 2)
+                     (list->matrix '((0 1) (1 1)))
+                     n)))
+    (matrix-ref fib-matrix 0 1)))
+
+(fib 0)  ; => 0
+(fib 1)  ; => 1
+(fib 10) ; => 55
+```
+
+対象が固定サイズの 2×2 行列であれば、1 回の行列積は `O(1)` なので、`fib` 全体は `O(log n)` 回の基本演算で求められる。一般の `d × d` 行列では、通常の行列積は 1 回あたり `O(d^3)` となる。なお、この簡潔な実装は行列の次元整合性を検査しないため、互換性のある正方行列を渡す必要がある。
+
 ## まとめ
 
 今回の中心的な設計意図は、繰り返しの仕組みと1回分の処理を分離することだった。
@@ -253,4 +362,4 @@ let repeat f n =
   monoid_pow endo_monoid f n
 ```
 
-これによって、加算、乗算、状態遷移などの具体的な処理から、反復・合成の仕組みを独立させられる。行列はその状態遷移を合成可能なデータとして表す手段であり、二分累乗によって高速化できる点が特徴となる。
+これによって、加算、乗算、状態遷移などの具体的な処理から、反復・合成の仕組みを独立させられる。行列はその状態遷移を合成可能なデータとして表す手段であり、二分累乗によって高速化できる点が特徴となる。Scheme の例でも、同じ抽象化を使って `2^n` とフィボナッチ数を計算できる。
