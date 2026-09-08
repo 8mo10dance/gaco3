@@ -66,3 +66,98 @@ SRFI-1の `fold` は、おおむね次のループに相当します。
 - SRFI-1では `fold` が左畳み込み、`fold-right` が右畳み込み。
 - ラムダの引数は、どちらも基本的に `(現在の要素 累積値)`。
 - 畳み込みの手続き名は、Schemeの規格や処理系によって異なる。
+
+## Guile の `identity`
+
+Guile には、引数をそのまま返す `identity` がある。
+
+```scheme
+(identity 42)
+;; => 42
+
+(identity '(1 2 3))
+;; => (1 2 3)
+```
+
+概念的には次の定義と同じ。
+
+```scheme
+(define (identity x) x)
+```
+
+追加の `use-modules` なしで利用できる。
+
+```scheme
+(map identity '(1 2 3))
+;; => (1 2 3)
+```
+
+## Guile で range 的なものを作る
+
+Guile では `iota` で連番のリストを生成できる。
+
+```scheme
+(iota 5)
+;; => (0 1 2 3 4)
+```
+
+開始値も指定できる。
+
+```scheme
+(iota 5 1)
+;; => (1 2 3 4 5)
+```
+
+刻み幅も指定できる。
+
+```scheme
+(iota 5 10 2)
+;; => (10 12 14 16 18)
+```
+
+形式は次の通り。
+
+```scheme
+(iota count [start [step]])
+```
+
+Ruby の `(1..5).to_a` に近いものは `(iota 5 1)` となる。ただし Ruby の `Range` のような「範囲を表すオブジェクト」ではなく、`iota` は連番のリストを生成する手続き。
+
+## Guile のリストへのインデックスアクセス
+
+リストには `list-ref` でインデックスアクセスできる。
+
+```scheme
+(list-ref '(a b c d) 2)
+;; => c
+```
+
+インデックスは 0 始まり。
+
+```scheme
+(list-ref '(10 20 30) 0)
+;; => 10
+```
+
+ただし Scheme のリストは基本的に連結リストなので、`list-ref` は **O(n)**。頻繁にランダムアクセスする場合は `vector` の方が適している。
+
+```scheme
+(define xs #(10 20 30))
+
+(vector-ref xs 2)
+;; => 30
+```
+
+`vector-ref` はランダムアクセスに向いており、基本的に **O(1)**。
+
+### 使い分け
+
+| やりたいこと | Guile |
+| --- | --- |
+| 連番を作る | `iota` |
+| リストの n 番目を取得 | `list-ref` |
+| Vector の n 番目を取得 | `vector-ref` |
+| 恒等関数 | `identity` |
+| 順番に処理する | `map`, `fold` など |
+
+Scheme のリストは先頭から順番に処理するのが得意なので、`iota` でインデックスを生成して `list-ref` を繰り返すより、可能なら `map` や `fold` で直接走査した方が自然で効率もよい。

@@ -4,11 +4,11 @@
 
 ## 言語
 
-- [Ruby 学習メモ](./ruby-learning-notes.md) — Ruby の標準機能、コレクション、数値計算など
+- [Ruby 学習メモ](./ruby-learning-notes.md) — Ruby の標準機能、コレクション、数値計算、`Module`、Monoid など
 - [OCaml 学習メモ](./ocaml-learning-notes.md) — OCaml の基本構文、コレクション、関数、入出力、Seq など
 - [モノイドによる繰り返しの抽象化](./monoid-repetition-abstraction.md) — 二分累乗、関数合成、行列による状態遷移
 - [S式と人間言語についての考察](./s-expressions-and-human-language.md) — S式と Ruby 的構文の比較
-- [Scheme 学習メモ](./scheme-learning-notes.md) — SRFI-1 の畳み込み手続きと処理系ごとの命名
+- [Scheme 学習メモ](./scheme-learning-notes.md) — SRFI-1 の畳み込み、Guile の `identity`、`iota`、リストとベクターのアクセス
 
 ## フロントエンド
 
