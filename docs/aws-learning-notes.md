@@ -760,3 +760,71 @@ Internet → CloudFront ───┤
 > 「何の問題を解決するために、このAWSサービスが必要なのか？」
 
 を実際に体験しながら理解できる。
+
+---
+
+## 18. EC2 から RDS へ接続する手順
+
+### ネットワーク設定
+
+EC2 から RDS へ接続するには、RDS に関連付けたセキュリティグループのインバウンドルールで、EC2 のセキュリティグループからの通信を許可する。
+
+MySQL の例:
+
+| 項目 | 設定値 |
+| --- | --- |
+| タイプ | MySQL/Aurora |
+| プロトコル | TCP |
+| ポート | 3306 |
+| ソース | EC2 に付与しているセキュリティグループ |
+
+EC2 と RDS は同じ VPC 内に配置するのが基本である。IP アドレスではなく、EC2 のセキュリティグループをソースに指定すると安全に管理できる。
+
+RDS コンソールでは、**RDS → データベース → 対象DB → アクション → EC2 接続をセットアップ** から、接続設定を補助できる。
+
+### RDS エンドポイントの確認場所
+
+AWS コンソールで **RDS → データベース → 対象のDB → 接続とセキュリティ** の順に開く。「エンドポイントとポート」に表示される **エンドポイント** を使う。`https://` は付けない。
+
+```text
+example.abcdefghijkl.ap-northeast-1.rds.amazonaws.com
+```
+
+### EC2 から Secrets Manager の認証情報を取得
+
+EC2 に付与した IAM ロールに、利用するシークレットを読むための `secretsmanager:GetSecretValue` 権限を付与する。
+
+シークレット名（または ARN）を環境変数 `DB_SECRET_ID` に指定し、AWS CLI で JSON を取得して `jq` で `username` と `password` を取り出す。
+
+```bash
+DB_SECRET_ID='任意のシークレット名またはARN'
+
+SECRET=$(aws secretsmanager get-secret-value \
+  --secret-id "$DB_SECRET_ID" \
+  --region ap-northeast-1 \
+  --query SecretString \
+  --output text)
+
+DB_USER=$(printf '%s' "$SECRET" | jq -r '.username')
+DB_PASSWORD=$(printf '%s' "$SECRET" | jq -r '.password')
+```
+
+パスワードは画面やログに出力しない。
+
+### MySQL への接続例
+
+RDS エンドポイントを設定してから接続する。
+
+```bash
+DB_HOST='example.abcdefghijkl.ap-northeast-1.rds.amazonaws.com'
+
+mysql \
+  -h "$DB_HOST" \
+  -P 3306 \
+  -u "$DB_USER" \
+  -p"$DB_PASSWORD"
+```
+
+`mysql` コマンドがない場合は、EC2 の OS に合わせて MySQL または MariaDB クライアントをインストールする。
+
+> 注意: シークレット、シェル変数、接続コマンドに含まれるパスワードを共有・記録しない。

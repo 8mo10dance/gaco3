@@ -439,4 +439,137 @@ Vector can enumerate
 -   `Enumerable` ≈ `Foldable`
 -   `Comparable` ≈ `Ord`
 
+---
+
+## identity
+
+Ruby 標準には、Guile の `identity` に直接対応する名前付き関数はない。関数として必要なら lambda を使える。
+
+```ruby
+identity = ->(x) { x }
+
+identity.call(42)
+# => 42
+```
+
+一方、`Object#itself` は「自分自身を返す」という意味で identity に近い。
+
+```ruby
+42.itself
+# => 42
+
+[1, 2, 3].map(&:itself)
+# => [1, 2, 3]
+```
+
+違いは次の通り。
+
+-   Guile の `identity` は `x -> x` という手続き
+-   Ruby の `itself` はレシーバ自身を返すメソッド
+
+## `Module` は継承できる
+
+`Module` 自体はクラスなので、`Module` を継承したクラスを作れる。
+
+```ruby
+class MyModule < Module
+end
+
+m = MyModule.new
+
+m.class
+# => MyModule
+
+m.is_a?(Module)
+# => true
+```
+
+Ruby の `Class` 自体も `Module` のサブクラス。
+
+```ruby
+Class.superclass
+# => Module
+
+Module.superclass
+# => Object
+```
+
+継承関係は概ね次のようになっている。
+
+```text
+BasicObject
+  ↑
+Object
+  ↑
+Module
+  ↑
+Class
+```
+
+ただし、次のように定義した `Foo` は `Module` のサブクラスではなく、`Module` のインスタンス。
+
+```ruby
+module Foo
+end
+
+Foo.class
+# => Module
+```
+
+## `module Monoid` と `EndoMonoid`
+
+`Monoid` を module として定義した場合、次のようなクラス継承はできない。
+
+```ruby
+module Monoid
+end
+
+class EndoMonoid < Monoid
+end
+```
+
+`<` はクラス継承のためのものなので、module に対しては `include` などを使う。
+
+```ruby
+module Monoid
+  def empty
+    raise NotImplementedError
+  end
+
+  def combine(a, b)
+    raise NotImplementedError
+  end
+end
+
+class EndoMonoid
+  include Monoid
+end
+```
+
+一方、`Monoid` を抽象クラスとして表現するなら、次のように書ける。
+
+```ruby
+class Monoid
+  def empty
+    raise NotImplementedError
+  end
+
+  def combine(a, b)
+    raise NotImplementedError
+  end
+end
+
+class EndoMonoid < Monoid
+  def empty
+    ->(x) { x }
+  end
+
+  def combine(f, g)
+    ->(x) { f.call(g.call(x)) }
+  end
+end
+```
+
+数学的には Monoid は「データの種類」というより、単位元があり、二項演算があり、結合則を満たすという**構造・能力**である。そのため Ruby では `module Monoid` として表現する考え方も自然。
+
 という感覚で理解できる。
