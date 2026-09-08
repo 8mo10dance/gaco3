@@ -20,6 +20,10 @@
 - [AWS 学習メモ](./aws-learning-notes.md) — AWS、Terraform、Floci、EC2 から RDS への接続手順
 - [IaaS・PaaS・FaaS まとめ](./cloud-service-models.md) — クラウドサービスモデルと EC2、Fargate の比較
 
+## データ・社会
+
+- [Proton、Solid / Inrupt、EUデータ政策の整理](./proton-solid-inrupt-eu-data-spaces.md) — データ主権、Data Spaces、MyData の関係
+
 ## ツール・環境構築
 
 - [Devbox 導入・使い方・Git管理まとめ](./devbox-guide.md) — Devbox の導入、利用、設定管理
