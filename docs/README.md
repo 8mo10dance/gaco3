@@ -17,7 +17,7 @@
 
 ## インフラ
 
-- [AWS 学習メモ](./aws-learning-notes.md) — AWS、Terraform、Floci を使った学習記録
+- [AWS 学習メモ](./aws-learning-notes.md) — AWS、Terraform、Floci、EC2 から RDS への接続手順
 - [IaaS・PaaS・FaaS まとめ](./cloud-service-models.md) — クラウドサービスモデルと EC2、Fargate の比較
 
 ## ツール・環境構築
