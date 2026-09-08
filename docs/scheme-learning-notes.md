@@ -161,3 +161,75 @@ Ruby の `(1..5).to_a` に近いものは `(iota 5 1)` となる。ただし Rub
 | 順番に処理する | `map`, `fold` など |
 
 Scheme のリストは先頭から順番に処理するのが得意なので、`iota` でインデックスを生成して `list-ref` を繰り返すより、可能なら `map` や `fold` で直接走査した方が自然で効率もよい。
+
+## Guile の `use-modules` 構文の読み方
+
+たとえば、次のように書く。
+
+```scheme
+(use-modules (srfi srfi-1))
+```
+
+Scheme の構文として見ると、まず一番外側は普通の S 式である。
+
+```text
+(use-modules ...)
+```
+
+つまり、`use-modules` という構文に引数を渡している。その中の `(srfi srfi-1)` は関数呼び出しではなく、**モジュール名を表す構文**である。
+
+したがって全体としては、`(srfi srfi-1)` という名前のモジュールを現在のモジュールに取り込む、という意味になる。
+
+### `(srfi srfi-1)` は何なのか
+
+Guile のモジュール名は、このような**シンボルのリスト**で表現する。
+
+```scheme
+(ice-9 match)
+(srfi srfi-1)
+(system base compile)
+```
+
+概念的には、次のような階層名だと考えるとわかりやすい。
+
+```text
+ice-9 / match
+srfi / srfi-1
+system / base / compile
+```
+
+たとえば、次の式は `ice-9` の `match` モジュールを使う、と読める。
+
+```scheme
+(use-modules (ice-9 match))
+```
+
+### 重要な点: 普通の関数呼び出しではない
+
+通常の Scheme の評価規則で `(srfi srfi-1)` を評価すると、`srfi` という手続きを `srfi-1` に適用する、という意味になってしまう。
+
+しかし、`use-modules` は手続きではなく**特殊な構文（syntax）**である。そのため、引数を普通の式として評価しない。
+
+```text
+use-modules
+    ↓
+(srfi srfi-1) を「式」ではなく「モジュール名」として解釈する
+```
+
+これは `define` と似ている。
+
+```scheme
+(define x 10)
+```
+
+この場合も `x` は評価されず、「これから定義する変数名」として解釈される。同じように、**S 式の意味は先頭にある構文によって変わりうる**。
+
+### まとめ
+
+`use-modules` は、次のような独自の文法を持つ。
+
+```scheme
+(use-modules <module-name> ...)
+```
+
+ここでの `<module-name>` が `(srfi srfi-1)` という形をしている、と理解するとわかりやすい。
