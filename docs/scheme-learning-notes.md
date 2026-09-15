@@ -233,3 +233,219 @@ use-modules
 ```
 
 ここでの `<module-name>` が `(srfi srfi-1)` という形をしている、と理解するとわかりやすい。
+
+## 文字列の基本操作
+
+### 文字列の作成
+
+```scheme
+"hello"
+
+(make-string 5 #\a)
+;; => "aaaaa"
+
+(string #\h #\e #\l #\l #\o)
+;; => "hello"
+```
+
+文字と文字列は別物。
+
+```scheme
+#\a   ; 文字
+"a"   ; 文字列
+```
+
+### 文字列の長さ
+
+```scheme
+(string-length "hello")
+;; => 5
+```
+
+### 文字の取得
+
+```scheme
+(string-ref "hello" 1)
+;; => #\e
+```
+
+インデックスは `0` 始まり。
+
+### 部分文字列
+
+```scheme
+(substring "hello world" 0 5)
+;; => "hello"
+
+(substring "hello world" 6 11)
+;; => "world"
+```
+
+範囲は `[start, end)`。
+
+### 文字列の結合
+
+```scheme
+(string-append "hello" " " "world")
+;; => "hello world"
+```
+
+### 文字列の比較
+
+```scheme
+(string=? "hello" "hello")
+;; => #t
+
+(string=? "hello" "Hello")
+;; => #f
+
+(string<? "abc" "def")
+;; => #t
+```
+
+大文字・小文字を無視する場合：
+
+```scheme
+(string-ci=? "Hello" "HELLO")
+;; => #t
+```
+
+### 文字列と文字リストの変換
+
+#### String → List
+
+```scheme
+(string->list "hello")
+;; => (#\h #\e #\l #\l #\o)
+```
+
+#### List → String
+
+```scheme
+(list->string '(#\h #\e #\l #\l #\o))
+;; => "hello"
+```
+
+Scheme では文字列を文字のリストに変換して、`map`、`filter`、`fold` などで処理する方法も便利。
+
+例：
+
+```scheme
+(list->string
+  (map char-upcase
+       (string->list "hello")))
+;; => "HELLO"
+```
+
+## 標準入力
+
+### `read`
+
+```scheme
+(define x (read))
+```
+
+`read` は入力を単なる文字列ではなく、**Scheme のデータとして読み込む**。
+
+例えば、次の入力は数値 `123` として読まれる。
+
+```text
+123
+```
+
+次の入力は文字列ではなくシンボル `hello` として読まれる。
+
+```text
+hello
+```
+
+文字列として `read` させるには、入力自体に `"` が必要。
+
+```text
+"hello"
+```
+
+空白区切りの数値を読む用途では便利。
+
+入力：
+
+```text
+10 20
+```
+
+コード：
+
+```scheme
+(define a (read))
+(define b (read))
+
+(+ a b)
+;; => 30
+```
+
+### 1 行を文字列として読む
+
+#### Guile
+
+Guile では `read-line` を利用できる。環境によっては以下のモジュールを読み込む。
+
+```scheme
+(use-modules (ice-9 rdelim))
+```
+
+その後、次のように読む。
+
+```scheme
+(define line (read-line))
+```
+
+入力：
+
+```text
+hello world
+```
+
+結果：
+
+```scheme
+"hello world"
+```
+
+#### `(ice-9 rdelim)` とは
+
+Guile が提供するモジュール。
+
+```scheme
+(use-modules (ice-9 rdelim))
+```
+
+これは Ruby で大雑把に考えると、次のようなものに近い。
+
+```ruby
+require "..."
+```
+
+`use-modules` は Scheme 共通の構文ではなく、**Guile のモジュールシステム**。
+
+#### Gauche
+
+Gauche では、`read-line` をそのまま利用できる。
+
+```scheme
+(define line (read-line))
+```
+
+## 文字列から数値への変換
+
+`string->number` を使う。
+
+```scheme
+(string->number "123")
+;; => 123
+
+(string->number "-42")
+;; => -42
+
+(string->number "3.14")
+;; => 3.14
+```
