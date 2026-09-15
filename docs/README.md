@@ -24,6 +24,10 @@
 
 - [Proton、Solid / Inrupt、EUデータ政策の整理](./proton-solid-inrupt-eu-data-spaces.md) — データ主権、Data Spaces、MyData の関係
 
+## データベース
+
+- [データベース基礎まとめ](./database-fundamentals.md) — 3層スキーマ、正規化、トランザクション、回復処理、排他制御
+
 ## ツール・環境構築
 
 - [Devbox 導入・使い方・Git管理まとめ](./devbox-guide.md) — Devbox の導入、利用、設定管理
