@@ -140,10 +140,97 @@ Hash.new(0)
 
 ### 可変オブジェクト
 
+存在しないキーにアクセスしたとき、自動的に空配列を生成して Hash に登録したい場合は `Hash.new` にブロックを渡す。
+
 ```ruby
-Hash.new { |h, k| h[k] = [] }
-Hash.new { |h, k| h[k] = Set.new }
+hash = Hash.new { |h, key| h[key] = [] }
+
+hash[:foo] << 1
+hash[:foo] << 2
+
+p hash
+# => {:foo=>[1, 2]}
 ```
+
+`Set` を値にする場合も同様に書ける。
+
+```ruby
+hash = Hash.new { |h, key| h[key] = Set.new }
+```
+
+#### `Hash.new([])` との違い
+
+以下の書き方は避ける。
+
+```ruby
+hash = Hash.new([])
+```
+
+この場合、存在しないすべてのキーに対して**同じ配列オブジェクト**が返される。
+
+```ruby
+hash[:foo] << 1
+
+p hash[:bar]
+# => [1]
+```
+
+キーごとに別の配列を持たせたい場合は、ブロック形式を使う。
+
+```ruby
+hash = Hash.new { |h, key| h[key] = [] }
+```
+
+---
+
+## 排他的論理和（XOR）
+
+Ruby では `^` が排他的論理和を表す。
+
+### Boolean の XOR
+
+```ruby
+true ^ false
+# => true
+
+false ^ true
+# => true
+
+true ^ true
+# => false
+
+false ^ false
+# => false
+```
+
+つまり、**左右が異なる場合だけ `true`** になる。
+
+| A | B | A ^ B |
+|---|---|---|
+| `false` | `false` | `false` |
+| `false` | `true` | `true` |
+| `true` | `false` | `true` |
+| `true` | `true` | `false` |
+
+### 整数の XOR
+
+整数に対して `^` を使うと、ビット単位の XOR になる。
+
+```ruby
+5 ^ 3
+# => 6
+```
+
+2進数で見ると、
+
+```text
+5 = 101
+3 = 011
+    ---
+    110 = 6
+```
+
+各ビットについて、異なる場合だけ `1` になる。
 
 ---
 

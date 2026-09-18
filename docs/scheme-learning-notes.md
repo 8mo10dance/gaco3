@@ -449,3 +449,567 @@ Gauche では、`read-line` をそのまま利用できる。
 (string->number "3.14")
 ;; => 3.14
 ```
+
+## 等価性の比較
+
+Scheme には用途の異なる比較手続きがある。
+
+### `=`
+
+数値として等しいかを比較する。
+
+```scheme
+(= 1 1)
+;; => #t
+
+(= 1 1.0)
+;; => #t
+```
+
+数値専用なので、文字列やリストの比較には使わない。
+
+### `eq?`
+
+同一のオブジェクトかを比較する。
+
+```scheme
+(define a (list 1 2 3))
+(define b a)
+
+(eq? a b)
+;; => #t
+```
+
+別々に生成したリストの場合：
+
+```scheme
+(define a (list 1 2 3))
+(define b (list 1 2 3))
+
+(eq? a b)
+;; => #f
+```
+
+Ruby の `Object#equal?` に近い。
+
+### `equal?`
+
+構造・内容が等しいかを比較する。
+
+```scheme
+(equal? '(1 2 3) '(1 2 3))
+;; => #t
+
+(equal? '(1 (2 3)) '(1 (2 3)))
+;; => #t
+```
+
+Ruby の `==` に近い。
+
+ざっくり整理すると：
+
+| Scheme | 意味 |
+|---|---|
+| `=` | 数値として等しい |
+| `eq?` | 同一オブジェクト |
+| `equal?` | 内容・構造が等しい |
+
+---
+
+## `any`
+
+SRFI-1 の `any` は Ruby の `Enumerable#any?` に近い。
+
+```scheme
+(use-modules (srfi srfi-1))
+
+(any even? '(1 3 4 5))
+;; => #t
+```
+
+ただし `any` は単純に `#t` を返すとは限らず、最初に真となった述語の戻り値を返す。
+
+```scheme
+(any (lambda (x)
+       (and (even? x) x))
+     '(1 3 4 6))
+;; => 4
+```
+
+すべて偽なら `#f`。
+
+対になるものとして `every` がある。
+
+```scheme
+(every even? '(2 4 6))
+;; => #t
+```
+
+Ruby との対応：
+
+| Ruby | Scheme / SRFI-1 |
+|---|---|
+| `any?` | `any` |
+| `all?` | `every` |
+
+---
+
+## 手続きをリストに入れる
+
+Scheme では手続きも普通の値なので、リストに入れられる。
+
+```scheme
+(list + - * /)
+```
+
+そして取り出した手続きをそのまま呼び出せる。
+
+```scheme
+(any (lambda (op)
+       (= (op 3 6) 9))
+     (list + - * /))
+;; => #t
+```
+
+---
+
+## `'(...)` と `(list ...)` の違い
+
+### `'(...)`
+
+`'` は `quote` の省略形。
+
+```scheme
+'(+ - * /)
+```
+
+は、
+
+```scheme
+(quote (+ - * /))
+```
+
+と同じ。
+
+`quote` の中身は評価されないため、これは `+`、`-`、`*`、`/` というシンボルを持つリストになる。
+
+```scheme
+(define x 10)
+
+'(x 20)
+;; => (x 20)
+```
+
+`x` は評価されない。
+
+### `(list ...)`
+
+`list` は通常の手続きなので、引数を評価してからリストを作る。
+
+```scheme
+(define x 10)
+
+(list x 20)
+;; => (10 20)
+```
+
+したがって、
+
+```scheme
+(list + - * /)
+```
+
+では `+` などが評価され、手続きのリストになる。
+
+整理すると：
+
+```text
+(list a b c)
+    ↓
+a, b, c を評価
+    ↓
+評価結果のリストを作る
+
+
+'(a b c)
+    ↓
+a, b, c を評価しない
+    ↓
+その構造自体をデータとして扱う
+```
+
+この「コードとデータが同じような構造をしている」という性質は Lisp / Scheme の重要な特徴。
+
+---
+
+## `for-each`
+
+Ruby の `each` に相当する。
+
+```scheme
+(for-each
+  (lambda (x)
+    (display x)
+    (newline))
+  '(1 2 3))
+```
+
+出力：
+
+```text
+1
+2
+3
+```
+
+`map` との違いは、`map` が新しいリストを作るのに対し、`for-each` は主に副作用のために使うこと。
+
+```scheme
+(map (lambda (x) (* x 2))
+     '(1 2 3))
+;; => (2 4 6)
+
+(for-each display
+          '(1 2 3))
+;; 123
+```
+
+Ruby との対応：
+
+| Ruby | Scheme |
+|---|---|
+| `map` | `map` |
+| `each` | `for-each` |
+| `any?` | `any` |
+| `all?` | `every` |
+
+---
+
+## `take` / `drop`
+
+SRFI-1 に含まれる。
+
+```scheme
+(use-modules (srfi srfi-1))
+```
+
+### `drop`
+
+左から n 個捨てる。
+
+```scheme
+(drop '(1 2 3 4 5) 2)
+;; => (3 4 5)
+```
+
+### `drop-right`
+
+右から n 個捨てる。
+
+```scheme
+(drop-right '(1 2 3 4 5) 2)
+;; => (1 2 3)
+```
+
+### `take`
+
+左から n 個取る。
+
+```scheme
+(take '(1 2 3 4 5) 2)
+;; => (1 2)
+```
+
+### `take-right`
+
+右から n 個取る。
+
+```scheme
+(take-right '(1 2 3 4 5) 2)
+;; => (4 5)
+```
+
+まとめ：
+
+| 手続き | 動作 |
+|---|---|
+| `take` | 左から n 個取る |
+| `drop` | 左から n 個捨てる |
+| `take-right` | 右から n 個取る |
+| `drop-right` | 右から n 個捨てる |
+
+---
+
+## `let` / `let*` / `letrec`
+
+### `let`
+
+ローカルな変数を定義する。
+
+```scheme
+(let ((a 10)
+      (b 20))
+  (+ a b))
+;; => 30
+```
+
+各変数の右辺からは、同じ `let` で新しく定義された変数は見えない。
+
+### `let*`
+
+上から順番に束縛する。
+
+```scheme
+(let* ((a 10)
+       (b (+ a 20)))
+  (+ a b))
+;; => 40
+```
+
+後ろの定義から前の定義を参照できる。
+
+### `letrec`
+
+すべての束縛を相互に参照できる。
+
+主にローカルな再帰関数に使う。
+
+```scheme
+(letrec ((fact
+          (lambda (n)
+            (if (= n 0)
+                1
+                (* n (fact (- n 1)))))))
+  (fact 5))
+;; => 120
+```
+
+相互再帰も可能。
+
+```scheme
+(letrec ((even?
+          (lambda (n)
+            (if (= n 0)
+                #t
+                (odd? (- n 1)))))
+         (odd?
+          (lambda (n)
+            (if (= n 0)
+                #f
+                (even? (- n 1))))))
+  (even? 10))
+;; => #t
+```
+
+イメージ：
+
+```text
+let     横並び
+let*    上から順番
+letrec  お互いを参照可能
+```
+
+---
+
+## named `let`
+
+再帰的なループを書く場合は named `let` も便利。
+
+```scheme
+(let loop ((n 5)
+           (acc 1))
+  (if (= n 0)
+      acc
+      (loop (- n 1)
+            (* acc n))))
+;; => 120
+```
+
+ローカルな再帰関数を定義して即座に呼び出すような構造になっている。
+
+---
+
+## `string-split`
+
+Guile では環境によって `string-split` が最初から見えているとは限らない。
+
+利用する場合は対応するモジュールを読み込む。
+
+```scheme
+(use-modules (ice-9 string-fun))
+```
+
+例：
+
+```scheme
+(string-split "foo bar baz" #\space)
+;; => ("foo" "bar" "baz")
+```
+
+区切りには文字列 `" "` ではなく character の `#\space` を渡す。
+
+---
+
+## `read-line` で数値を読む
+
+`read-line` は文字列を返す。
+
+例えば入力：
+
+```text
+3 6
+```
+
+に対して、
+
+```scheme
+(read-line)
+;; => "3 6"
+```
+
+となる。
+
+そのため、数値にするなら分割して `string->number` する必要がある。
+
+```scheme
+(map string->number
+     (string-split (read-line) #\space))
+;; => (3 6)
+```
+
+---
+
+## `read` で数値を直接読む
+
+競技プログラミングのように入力形式が決まっている場合は `read` が便利。
+
+入力：
+
+```text
+3 6
+```
+
+に対して、
+
+```scheme
+(define a (read))
+(define b (read))
+```
+
+とすると、
+
+```scheme
+a
+;; => 3
+
+b
+;; => 6
+```
+
+となる。
+
+`read` は Scheme の値として解釈するため `string->number` が不要。
+
+また、空白と改行を入力値の区切りとして扱えるため、
+
+```text
+3 6
+```
+
+でも
+
+```text
+3
+6
+```
+
+でも同じように、
+
+```scheme
+(read)
+(read)
+```
+
+で読める。
+
+---
+
+## n 個の数値を `read` する
+
+例えば、
+
+```text
+5
+1 2 3 4 5
+```
+
+という入力を読む場合。
+
+### `iota` + `map`
+
+```scheme
+(use-modules (srfi srfi-1))
+
+(let* ((n (read))
+       (as (map (lambda (_) (read))
+                (iota n))))
+  ...)
+```
+
+`iota n` は、
+
+```scheme
+(iota 5)
+;; => (0 1 2 3 4)
+```
+
+を作る。
+
+その各要素について `(read)` することで n 個読み込んでいる。
+
+### 再帰で書く
+
+```scheme
+(define (read-n n)
+  (if (= n 0)
+      '()
+      (cons (read)
+            (read-n (- n 1)))))
+
+(let* ((n (read))
+       (as (read-n n)))
+  ...)
+```
+
+こちらは「n 回 `read` する」という処理を直接表現している。
+
+---
+
+## 演算子を走査する例
+
+ここまでの要素を組み合わせると、2つの数 `a`, `b` に対して `+`, `-`, `*`, `/` のどれかで 9 を作れるかは次のように書ける。
+
+```scheme
+(use-modules (srfi srfi-1))
+
+(let ((a (read))
+      (b (read)))
+  (if (any (lambda (op)
+             (= (op a b) 9))
+           (list + - * /))
+      (display "Nine")
+      (display "Nein"))
+  (newline))
+```
+
+`(list + - * /)` は手続きそのもののリスト。
+
+`any` が各手続きを `op` として受け取り、
+
+```scheme
+(op a b)
+```
+
+として実行している。
+
+なお `/` は `b = 0` の場合にはゼロ除算になるので、入力条件によっては別途考慮が必要。
