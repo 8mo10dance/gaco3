@@ -19,6 +19,7 @@
 
 - [AWS 学習メモ](./aws-learning-notes.md) — AWS、Terraform、Floci、EC2 から RDS への接続手順
 - [IaaS・PaaS・FaaS まとめ](./cloud-service-models.md) — クラウドサービスモデルと EC2、Fargate の比較
+- [OSI参照モデルとネットワーク基礎](./osi-network-basics.md) — OSI参照モデル、AWSネットワーク、HTTP/3・QUIC、TLSの整理
 
 ## データ・社会
 
