@@ -18,6 +18,7 @@
 ## インフラ
 
 - [AWS 学習メモ](./aws-learning-notes.md) — AWS、Terraform、Floci、EC2 から RDS への接続手順
+- [OSI参照モデルとネットワーク基礎](./osi-network-basics.md) — OSI、ARP、AWSネットワーク、HTTP/3・QUIC、TLSの関係
 - [IaaS・PaaS・FaaS まとめ](./cloud-service-models.md) — クラウドサービスモデルと EC2、Fargate の比較
 
 ## データ・社会
