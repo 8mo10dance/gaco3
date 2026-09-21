@@ -28,6 +28,10 @@
 
 - [データベース基礎まとめ](./database-fundamentals.md) — 3層スキーマ、正規化、トランザクション、回復処理、排他制御
 
+## グラフ・アルゴリズム
+
+- [隣接行列とグラフ探索](./graph-matrix-and-search.md) — 行列累乗による到達可能性、DFS、BFS、frontier の考え方
+
 ## ツール・環境構築
 
 - [Devbox 導入・使い方・Git管理まとめ](./devbox-guide.md) — Devbox の導入、利用、設定管理
