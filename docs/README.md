@@ -9,6 +9,7 @@
 - [モノイドによる繰り返しの抽象化](./monoid-repetition-abstraction.md) — 二分累乗、関数合成、行列による状態遷移
 - [S式と人間言語についての考察](./s-expressions-and-human-language.md) — S式と Ruby 的構文の比較
 - [Scheme 学習メモ](./scheme-learning-notes.md) — SRFI-1、Guile・Gauche、末尾再帰、パターンマッチ、`scan`、等価性、文字列操作、標準入力など
+- [fold・unfold・scan と状態遷移](./fold-unfold-scan.md) — 入力の消費と出力の生成、途中状態の観測、終端条件、ループの構造化
 
 ## フロントエンド
 
