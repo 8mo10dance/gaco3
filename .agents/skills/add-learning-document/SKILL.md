@@ -22,13 +22,19 @@ description: Provide a supplied learning note as a new docs/ Markdown document, 
 1. `docs/README.md` と関連する既存文書を読んで、ファイル名・書式・カテゴリを決める。
 2. 新規文書と索引を更新する。
 3. `chmod 0644 docs/<filename>.md` を実行する。
-4. 次をリポジトリルートで実行する。
+4. `markdownlint-cli2` が未導入で `npm run lint:docs` が実行できない場合は、リポジトリルートで `npm install` を実行して依存関係を導入してから、次の検証を実行する。
+
+   ```bash
+   npm install
+   ```
+
+5. 次をリポジトリルートで実行する。
 
    ```bash
    npm run validate:docs
    git diff --check
    ```
 
-5. 検証エラーを修正し、変更した文書、索引、検証結果を報告する。
+6. 検証エラーを修正し、変更した文書、索引、検証結果を報告する。
 
 例: `$add-learning-document この OCaml のメモを docs に追加して: ...`
