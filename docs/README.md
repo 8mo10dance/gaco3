@@ -16,6 +16,10 @@
 - [MVVM とは](./mvvm.md) — MVC、MVVM、Reactive Programming の関係
 - [Reactive Programming for JS](./reactive-programming-for-js.md) — JavaScript のリアクティブな状態管理
 
+## グラフ・アルゴリズム
+
+- [尺取り法の数学的な見方](./sliding-window-mathematical-view.md) — 単調な2次元述語の境界探索として尺取り法を捉える
+
 ## インフラ
 
 - [AWS 学習メモ](./aws-learning-notes.md) — AWS、Terraform、Floci、EC2 から RDS への接続手順
