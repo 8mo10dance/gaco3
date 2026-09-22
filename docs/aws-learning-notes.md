@@ -790,41 +790,122 @@ AWS コンソールで **RDS → データベース → 対象のDB → 接続�
 example.abcdefghijkl.ap-northeast-1.rds.amazonaws.com
 ```
 
-### EC2 から Secrets Manager の認証情報を取得
+### Secrets Manager に認証情報を作成する
 
-EC2 に付与した IAM ロールに、利用するシークレットを読むための `secretsmanager:GetSecretValue` 権限を付与する。
+AWS コンソールで **Secrets Manager → 新しいシークレットを保存** を開く。シークレットのタイプは **RDS データベースの認証情報** を選び、`username` と `password` を入力して対象の RDS DB インスタンスを選択する。名前を付けて保存する。接続例では、保存された JSON の `username` と `password` を利用する。
 
-シークレット名（または ARN）を環境変数 `DB_SECRET_ID` に指定し、AWS CLI で JSON を取得して `jq` で `username` と `password` を取り出す。
+作成後、シークレット詳細の **シークレット ARN** をコピーする。IAM ポリシーの `Resource` と EC2 上の `--secret-id` には、末尾のランダムなサフィックスまで含む完全な ARN を指定する。
 
-```bash
-DB_SECRET_ID='任意のシークレット名またはARN'
-
-SECRET=$(aws secretsmanager get-secret-value \
-  --secret-id "$DB_SECRET_ID" \
-  --region ap-northeast-1 \
-  --query SecretString \
-  --output text)
-
-DB_USER=$(printf '%s' "$SECRET" | jq -r '.username')
-DB_PASSWORD=$(printf '%s' "$SECRET" | jq -r '.password')
+```text
+arn:aws:secretsmanager:ap-northeast-1:123456789012:secret:myapp/rds-credentials-a1B2c3
 ```
 
-パスワードは画面やログに出力しない。
+`myapp/rds-credentials` のような名前だけや、末尾サフィックスを省いた ARN ではなく、コンソールに表示された ARN をそのまま使う。
 
-### MySQL への接続例
+### EC2 の IAM ロールに読み取り権限を追加する
 
-RDS エンドポイントを設定してから接続する。
+EC2 には IAM ロールを一つだけ関連付ける。新しいロールを追加するのではなく、EC2 にすでに関連付けられているロールへ、対象シークレットだけを読めるインラインポリシーまたは管理ポリシーを追加する。
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "secretsmanager:GetSecretValue",
+      "Resource": "arn:aws:secretsmanager:ap-northeast-1:123456789012:secret:myapp/rds-credentials-a1B2c3"
+    }
+  ]
+}
+```
+
+シークレットにカスタマー管理 KMS キーを使っている場合は、そのキーに対する復号権限も別途必要になる。
+
+### Amazon Linux 2023 にクライアントをインストールする
+
+Amazon Linux 2023 で `mysql-client` が見つからない場合は、MariaDB クライアントと `jq` をインストールする。
 
 ```bash
+sudo dnf install -y mariadb105 jq
+```
+
+`mariadb105` の `105` は MariaDB 10.5 を表す。RDS に接続するだけならサーバーは不要なので、`mariadb105-server` をインストールする必要はない。`mysql` コマンドとして接続できることを確認する。
+
+```bash
+mysql --version
+jq --version
+```
+
+### EC2 から Secrets Manager の認証情報を確認する
+
+EC2 上で、完全な Secret ARN を環境変数に設定して取得を確認する。以下の確認コマンドはパスワードを表示しない。
+
+```bash
+AWS_REGION='ap-northeast-1'
+DB_SECRET_ARN='arn:aws:secretsmanager:ap-northeast-1:123456789012:secret:myapp/rds-credentials-a1B2c3'
+
+aws secretsmanager get-secret-value \
+  --secret-id "$DB_SECRET_ARN" \
+  --region "$AWS_REGION" \
+  --query 'SecretString' \
+  --output text |
+  jq -e '{username: .username, password_present: (.password | type == "string" and length > 0)}'
+```
+
+`password_present` が `true` になれば、JSON から `username` と `password` を取得できる。パスワードそのものを画面やログに出力しない。
+
+### defaults-extra-file による安全な MySQL 接続例
+
+パスワードを `mysql` の `-p` 引数に直接渡さない。代わりに、所有者だけが読める一時 option file を作り、`--defaults-extra-file` を最初の引数として渡す。
+
+```bash
+set -euo pipefail
+
+AWS_REGION='ap-northeast-1'
+DB_SECRET_ARN='arn:aws:secretsmanager:ap-northeast-1:123456789012:secret:myapp/rds-credentials-a1B2c3'
 DB_HOST='example.abcdefghijkl.ap-northeast-1.rds.amazonaws.com'
 
-mysql \
-  -h "$DB_HOST" \
-  -P 3306 \
-  -u "$DB_USER" \
-  -p"$DB_PASSWORD"
+umask 077
+MYSQL_DEFAULTS_FILE=$(mktemp)
+trap 'rm -f "$MYSQL_DEFAULTS_FILE"' EXIT HUP INT TERM
+
+aws secretsmanager get-secret-value \
+  --secret-id "$DB_SECRET_ARN" \
+  --region "$AWS_REGION" \
+  --query 'SecretString' \
+  --output text |
+  jq -er --arg host "$DB_HOST" '\
+    "[client]", \
+    "host=" + $host, \
+    "port=3306", \
+    "user=" + .username, \
+    "password=" + .password \
+  ' >"$MYSQL_DEFAULTS_FILE"
+chmod 600 "$MYSQL_DEFAULTS_FILE"
+
+mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE"
 ```
 
-`mysql` コマンドがない場合は、EC2 の OS に合わせて MySQL または MariaDB クライアントをインストールする。
+`umask 077`、`mktemp`、`chmod 600` により一時ファイルは所有者だけが読める。`trap` は接続終了時や割り込み時にファイルを削除する。`--defaults-extra-file` は MySQL のオプション解釈のため、必ず他の MySQL オプションより前に置く。
+
+### user_data を変更したときの反映
+
+EC2 の `user_data` は通常、初回起動時に実行される。既存インスタンスを通常どおり再起動しても再実行されないため、パッケージ追加などの変更は再起動だけでは反映されない。
+
+Terraform で `user_data` の変更時にインスタンスを置き換えるには、`aws_instance` に次を指定する。
+
+```hcl
+resource "aws_instance" "app" {
+  # ...
+  user_data                   = file("user_data.sh")
+  user_data_replace_on_change = true
+}
+```
+
+特定のインスタンスを明示的に作り直して反映する場合は、次のように実行する。
+
+```bash
+terraform apply -replace='aws_instance.app'
+```
 
 > 注意: シークレット、シェル変数、接続コマンドに含まれるパスワードを共有・記録しない。
