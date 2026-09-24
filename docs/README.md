@@ -23,6 +23,7 @@
 ## インフラ
 
 - [AWS 学習メモ](./aws-learning-notes.md) — AWS、Terraform、Floci、EC2 から RDS への接続手順
+- [ALB 導入から学ぶ AWS 通信・運用・Terraform](./aws-alb-learning-notes.md) — ALB、Security Group、障害切り分け、ACM、Terraform import の学習ノート
 - [OSI参照モデルとネットワーク基礎](./osi-network-basics.md) — OSI、ARP、AWSネットワーク、HTTP/3・QUIC、TLSの関係
 - [IaaS・PaaS・FaaS まとめ](./cloud-service-models.md) — クラウドサービスモデルと EC2、Fargate の比較
 
