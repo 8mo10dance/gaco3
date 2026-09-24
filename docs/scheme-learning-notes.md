@@ -337,6 +337,23 @@ Scheme では文字列を文字のリストに変換して、`map`、`filter`、
 ;; => "HELLO"
 ```
 
+### 数値のリストを空白区切りで出力する
+
+数値をそのまま `string-join` には渡せないので、先に `number->string` で文字列へ変換する。
+
+```scheme
+(define numbers '(10 20 30))
+
+(string-join (map number->string numbers) " ")
+;; => "10 20 30"
+```
+
+手元の Guile では、`string-join` は追加の `use-modules` なしで利用できた。未定義になる環境では、SRFI-13 を読み込む。
+
+```scheme
+(use-modules (srfi srfi-13))
+```
+
 ## 標準入力
 
 ### `read`
