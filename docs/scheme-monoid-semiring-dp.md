@@ -23,13 +23,11 @@
 (define add-monoid (make-monoid 0 +))
 (define mul-monoid (make-monoid 1 *))
 
-
 ```
 
 この引数順に合わせて、以下の例も記述する。
 
 `monoid-pow` は同じ要素を繰り返し結合する処理である。一方、`monoid-fold` は任意の列を単位元から順に結合する処理として定義できる。
-
 
 ```scheme
 (define (monoid-fold monoid xs)
@@ -156,7 +154,6 @@ h(空列) = (0, 0)
   (mul-monoid semiring-mul-monoid))
 ```
 
-
 ```scheme
 (define natural-semiring
   (make-semiring add-monoid mul-monoid))
@@ -207,11 +204,9 @@ h(空列) = (0, 0)
     (make-monoid +inf.0 min)
     (make-monoid 0 +)))
 
-
 (count-paths natural-semiring 2 3 1 4) ; => 10
 (count-paths min-plus-semiring 2 3 1 4) ; => 5
 ```
-
 
 ```text
 (ab ⊗ bd) ⊕ (ac ⊗ cd)
@@ -250,7 +245,6 @@ dp[v] = ⊕ { dp[u] ⊗ w(u, v) | u → v }
                                   '((0 1) (1 1)))
                                 n)))
     (matrix-ref fib-matrix 0 1)))
-
 
 (fib 10) ; => 55
 ```
