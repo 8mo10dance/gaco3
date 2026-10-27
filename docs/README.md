@@ -19,6 +19,7 @@
 
 ## グラフ・アルゴリズム
 
+- [隣接行列とグラフ探索](./graph-matrix-and-search.md) — 行列累乗による到達可能性、DFS、BFS、frontier の考え方
 - [尺取り法の数学的な見方](./sliding-window-mathematical-view.md) — 単調な2次元述語の境界探索として尺取り法を捉える
 - [ナップサック問題の母関数表現と Max-Plus 型の状態圧縮](./knapsack-generating-function.md) — 母関数による選択肢の表現、最大価値を保つ状態圧縮、Max-Plus 半環との対応
 
@@ -36,10 +37,6 @@
 ## データベース
 
 - [データベース基礎まとめ](./database-fundamentals.md) — 3層スキーマ、正規化、トランザクション、回復処理、排他制御
-
-## グラフ・アルゴリズム
-
-- [隣接行列とグラフ探索](./graph-matrix-and-search.md) — 行列累乗による到達可能性、DFS、BFS、frontier の考え方
 
 ## ツール・環境構築
 
