@@ -20,6 +20,7 @@
 ## グラフ・アルゴリズム
 
 - [尺取り法の数学的な見方](./sliding-window-mathematical-view.md) — 単調な2次元述語の境界探索として尺取り法を捉える
+- [ナップサック問題の母関数表現と Max-Plus 型の状態圧縮](./knapsack-generating-function.md) — 母関数による選択肢の表現、最大価値を保つ状態圧縮、Max-Plus 半環との対応
 
 ## インフラ
 
