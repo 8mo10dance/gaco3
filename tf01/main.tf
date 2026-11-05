@@ -37,3 +37,9 @@ resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
 }
+
+resource "aws_instance" "web" {
+  ami = "ami-0d6d9b11f5af70dfc"
+  instance_type = "t2.micro"
+  subnet_id = aws_subnet.public.id
+}
