@@ -25,6 +25,7 @@
 
 ## インフラ
 
+- [Floci + Terraform で学ぶ ECS/Fargate と VPC ネットワーク](./floci-terraform-ecs-fargate-notes.md) — nginx タスクの構築、VPC・SG・NACL の役割、ローカル実行と実 AWS の違い
 - [AWS 学習メモ](./aws-learning-notes.md) — AWS、Terraform、Floci、EC2 から RDS への接続手順
 - [ALB 導入から学ぶ AWS 通信・運用・Terraform](./aws-alb-learning-notes.md) — ALB、Security Group、障害切り分け、ACM、Terraform import の学習ノート
 - [OSI参照モデルとネットワーク基礎](./osi-network-basics.md) — OSI、Ethernet、ARP、AWSネットワーク、HTTP/3・QUIC、TLSの関係
