@@ -32,3 +32,10 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Terraform local state and downloaded providers.
+/.terraform/
+/*.tfstate
+/*.tfstate.*
+/*.tfplan
+/crash.log
