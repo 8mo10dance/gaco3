@@ -18,23 +18,18 @@ Ruby 2.7.8 と Rails 6.0 系はコンテナ内で動作するため、ホスト�
 # Docker Desktop を使う場合（Linux の通常の Docker では不要）
 export DOCKER_CONTEXT=desktop-linux
 
-# provider のインストールと、イメージのビルド・コンテナの起動
+# provider のインストールと、イメージのビルド・コンテナの起動・DB とバケットの準備
 terraform init
 terraform apply
-
-# DB の準備
-docker exec rails-app bundle exec rails db:prepare
-
-# 画像保存用バケットの作成
-docker exec rails-app bundle exec rails runner 'Aws::S3::Client.new.create_bucket(bucket: "mybucket", object_ownership: "BucketOwnerPreferred", create_bucket_configuration: { location_constraint: "ap-northeast-1" })'
 ```
 
-バケット作成は Floci の起動準備が完了してから実行してください。起動状況は `docker ps`、ログは `docker logs rails-floci` で確認できます。
+画像保存用の `mybucket` と ACL 設定（`BucketOwnerPreferred`）は AWS provider が Floci に作成します。画像は `public-read` ACL で保存します。Terraform はホストの `http://localhost:4566` に接続します。
 
-画像は `public-read` ACL で保存するため、バケットの ACL を `BucketOwnerPreferred` で有効にします。作成済みのバケットで `The bucket does not allow ACLs` が出る場合は、次のコマンドで設定を変更してください。
+既存バケットを初めて Terraform 管理に取り込む場合は、`terraform init` 後に次を実行してください。
 
 ```bash
-docker exec rails-app bundle exec rails runner 'Aws::S3::Client.new.put_bucket_ownership_controls(bucket: "mybucket", ownership_controls: { rules: [{ object_ownership: "BucketOwnerPreferred" }] })'
+terraform import aws_s3_bucket.avatars mybucket
+terraform import aws_s3_bucket_ownership_controls.avatars mybucket
 ```
 
 Compose から切り替える場合は、`terraform apply` の前に `docker stop rails-rails-1 rails-floci-1` で既存コンテナを停止してポートを解放してください（既定のコンテナ名の場合）。旧 LocalStack が起動中なら `docker stop rails-localstack-1` も実行します。既存の画像データは新しい Floci コンテナに移行されません。
@@ -59,13 +54,21 @@ docker logs -f rails-app
 terraform destroy
 ```
 
+`terraform destroy` は画像が残っているバケットを削除できません。削除する場合は、先にバケット内の画像を空にしてください。
+
 SQLite の DB はホスト側の `db/` に保存されます。gem は Docker イメージのビルド時にインストールされます。`Gemfile` または `Gemfile.lock` を変更した場合は、`terraform apply` で再ビルドとコンテナの更新が行われます。アプリケーションコードはバインドマウントされます。
 
-Floci のデータ永続化は設定されていません。コンテナを作り直した場合は、初回セットアップのバケット作成コマンドを再実行してください。以前アップロードした画像も失われるため、必要に応じて再アップロードします。
+開発用 DB は Terraform が `rails db:prepare` で準備します。初回作成時・Rails コンテナの再作成時・`db/migrate/*.rb` または `config/database.yml` の変更時に実行されます。DB ファイルを手動で削除した場合など、再実行が必要なときは次のコマンドを使用してください。
+
+```bash
+terraform apply -replace=terraform_data.db_prepare
+```
+
+Floci のデータ永続化は設定されていません。コンテナを作り直してバケットが消失した場合は、再度 `terraform apply` してバケットを作成してください。以前アップロードした画像も失われるため、必要に応じて再アップロードします。
 
 ## テスト
 
-初回セットアップ後、次のコマンドでテスト用 DB の準備と RSpec の実行ができます。画像アップロードを扱うテストのため、Floci と `mybucket` も準備してください。
+初回セットアップ後、次のコマンドでテスト用 DB の準備と RSpec の実行ができます。Floci と `mybucket` は `terraform apply` で準備されます。
 
 ```bash
 docker exec -e RAILS_ENV=test rails-app bundle exec rails db:prepare
