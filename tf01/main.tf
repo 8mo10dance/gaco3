@@ -42,4 +42,30 @@ resource "aws_instance" "web" {
   ami = "ami-0d6d9b11f5af70dfc"
   instance_type = "t2.micro"
   subnet_id = aws_subnet.public.id
+  vpc_security_group_ids = [aws_security_group.ssh.id]
+  key_name = aws_key_pair.main.key_name
+}
+
+resource "aws_key_pair" "main" {
+  key_name = "floci-key"
+  public_key = file("./keys/floci_key.pub")
+}
+
+resource "aws_security_group" "ssh" {
+  name = "floci-ssh"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
