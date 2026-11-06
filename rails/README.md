@@ -16,7 +16,6 @@ Ruby 2.7.8 と Rails 6.0 系はコンテナ内で動作するため、ホスト�
 ```bash
 # イメージのビルドと gem のインストール
 docker compose build rails
-docker compose run --rm rails bundle install
 
 # DB の準備
 docker compose run --rm rails bundle exec rails db:prepare
@@ -49,7 +48,7 @@ docker compose logs -f rails
 docker compose down
 ```
 
-SQLite の DB はホスト側の `db/` に、gem は Docker の名前付きボリュームに保存されます。
+SQLite の DB はホスト側の `db/` に保存されます。gem は Docker イメージのビルド時にインストールされます。`Gemfile` または `Gemfile.lock` を変更した場合は、`docker compose build rails` で再ビルドし、`docker compose up -d rails` でコンテナを更新してください。
 
 LocalStack のデータ永続化は設定されていません。コンテナを作り直した場合は、初回セットアップのバケット作成コマンドを再実行してください。以前アップロードした画像も失われるため、必要に応じて再アップロードします。
 

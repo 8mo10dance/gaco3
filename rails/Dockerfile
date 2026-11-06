@@ -5,5 +5,8 @@ WORKDIR /rails
 # bundle install 時の ffi-1.17.1-x86_64-linux-musl のエラーのため
 RUN gem update --system 3.3.22
 
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
 EXPOSE 3000
 CMD bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0"
