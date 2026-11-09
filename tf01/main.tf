@@ -42,7 +42,10 @@ resource "aws_instance" "web" {
   ami = "ami-0d6d9b11f5af70dfc"
   instance_type = "t2.micro"
   subnet_id = aws_subnet.public.id
-  vpc_security_group_ids = [aws_security_group.ssh.id]
+  vpc_security_group_ids = [
+    aws_security_group.ssh.id,
+    aws_security_group.web.id,
+  ]
   key_name = aws_key_pair.main.key_name
 
   user_data = file("${path.module}/user_data.sh")
@@ -69,6 +72,18 @@ resource "aws_security_group" "ssh" {
     from_port = 0
     to_port = 0
     protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "web" {
+  name = "floci-web"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
