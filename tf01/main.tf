@@ -44,6 +44,9 @@ resource "aws_instance" "web" {
   subnet_id = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.ssh.id]
   key_name = aws_key_pair.main.key_name
+
+  user_data = file("${path.module}/user_data.sh")
+  user_data_replace_on_change = true
 }
 
 resource "aws_key_pair" "main" {
