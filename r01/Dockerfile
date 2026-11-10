@@ -1,4 +1,4 @@
-FROM ghcr.io/8mo10dance/ruby:3.2.2
+FROM --platform=linux/amd64 ghcr.io/8mo10dance/ruby:3.2.2
 
 COPY apt-packages .
 
