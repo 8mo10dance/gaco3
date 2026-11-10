@@ -1,8 +1,0 @@
-.terraform
-*.tfstate
-*.tfstate.*
-*.tfplan
-log
-tmp
-db/*.sqlite3*
-config/master.key
