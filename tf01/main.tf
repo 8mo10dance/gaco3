@@ -51,6 +51,32 @@ output "ecr_repository_url" {
   value = aws_ecr_repository.nginx.repository_url
 }
 
+data "aws_iam_policy_document" "ec2_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "ec2" {
+  name = "nginx-ec2-role"
+  assume_role_policy = data.aws_iam_policy_document.ec2_assume_role.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecr_read" {
+  role = aws_iam_role.ec2.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_instance_profile" "ec2" {
+  name = "nginx-ec2-profile"
+  role = aws_iam_role.ec2.name
+}
+
 resource "aws_instance" "web" {
   ami = "ami-0d6d9b11f5af70dfc"
   instance_type = "t2.micro"
@@ -61,8 +87,14 @@ resource "aws_instance" "web" {
   ]
   key_name = aws_key_pair.main.key_name
 
+  iam_instance_profile = aws_iam_instance_profile.ec2.name
+
   user_data = file("${path.module}/user_data.sh")
   user_data_replace_on_change = true
+
+  depends_on = [
+    aws_iam_role_policy_attachment.ecr_read
+  ]
 }
 
 resource "aws_key_pair" "main" {
