@@ -38,6 +38,19 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
+resource "aws_ecr_repository" "nginx" {
+  name = "my-nginx"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+output "ecr_repository_url" {
+  value = aws_ecr_repository.nginx.repository_url
+}
+
 resource "aws_instance" "web" {
   ami = "ami-0d6d9b11f5af70dfc"
   instance_type = "t2.micro"
