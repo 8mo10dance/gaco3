@@ -89,7 +89,11 @@ resource "aws_instance" "web" {
 
   iam_instance_profile = aws_iam_instance_profile.ec2.name
 
-  user_data = file("${path.module}/user_data.sh")
+  user_data = templatefile("${path.module}/user_data.sh", {
+    region = "ap-northeast-1"
+    ecr_url = aws_ecr_repository.nginx.repository_url
+    ecr_registry = split("/", aws_ecr_repository.nginx.repository_url)[0]
+  })
   user_data_replace_on_change = true
 
   depends_on = [
