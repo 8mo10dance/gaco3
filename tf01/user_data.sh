@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -auo pipefail
+set -euo pipefail
 
 dnf update -y
 dnf install -y docker
