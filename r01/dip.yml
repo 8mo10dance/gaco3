@@ -1,6 +1,11 @@
 version: '4'
 
 interaction:
+  terraform:
+    service: terraform
+    command: ""
+    compose:
+      run_options: [no-deps, entrypoint=terraform]
   bash:
     service: rails
     command: bash

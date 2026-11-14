@@ -21,9 +21,12 @@ services:
       AWS_SECRET_ACCESS_KEY: dummy
     command: bash -lc "rm -f tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0 -p 3000"
     depends_on:
-      - mysql
-      - mysql_test
-      - floci
+      mysql:
+        condition: service_started
+      mysql_test:
+        condition: service_started
+      terraform:
+        condition: service_completed_successfully
   floci:
     image: floci/floci:latest-compat
     ports:
@@ -32,7 +35,16 @@ services:
       QUARKUS_LOG_LEVEL: DEBUG
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - "./floci/init:/etc/floci/init"
+  terraform:
+    image: hashicorp/terraform:1.14.0
+    working_dir: /terraform
+    volumes:
+      - ./terraform:/terraform
+    entrypoint: /bin/sh
+    command: -ec 'terraform init -input=false && terraform apply -input=false -auto-approve'
+    depends_on:
+      floci:
+        condition: service_healthy
   mysql:
     <<: *mysql
     ports:
