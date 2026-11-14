@@ -44,7 +44,7 @@
 - [Devbox 導入・使い方・Git管理まとめ](./devbox-guide.md) — Devbox の導入、利用、設定管理
 - [Docker on WSL2 トラブルシューティング](./docker-wsl2-troubleshooting.md) — 権限とクレデンシャル関連の問題
 - [Linux で ps が使えない場合の対応](./troubleshooting-ps.md) — ps の導入方法と Docker・ss・/proc によるプロセス確認
-- [git-filter-repo --subdirectory-filter の整理](./git-filter-repo-subdirectory-filter.md) — サブディレクトリの履歴を切り出す方法
+- [git-filter-repo によるリポジトリの切り出しと統合](./git-filter-repo-subdirectory-filter.md) — サブディレクトリの切り出し、別リポジトリの履歴付き取り込み、subtree の代替手順
 - [Yazi と Lazygit の組み合わせ方](./yazi-lazygit-integration.md) — Yazi から Lazygit を呼び出す設定
 - [Rails アプリケーション作成用の環境構築](./rails-application-setup.md) — Docker と Makefile を使った `rails new`
 - [Ruby 2.7 / Rails 6.0 の検証環境](./ruby-2-7-rails-6-validation-environment.md) — 旧バージョン向けの検証環境構築
