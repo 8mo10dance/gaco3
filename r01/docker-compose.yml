@@ -32,7 +32,6 @@ services:
       QUARKUS_LOG_LEVEL: DEBUG
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - "./floci/init:/etc/floci/init"
   mysql:
     <<: *mysql
     ports:

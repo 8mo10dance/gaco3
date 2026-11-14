@@ -3,9 +3,33 @@
 ```bash
 $ dip provision
 $ dip up -d
+$ terraform -chdir=terraform init
+$ terraform -chdir=terraform apply
 ```
 
 ## Floci の S3 を扱う方法
+
+設定は `terraform/` で管理し、`microposts` バケット、所有権、公開 ACL の許可、PUT 用 CORS を作成する。
+Terraform はローカルにインストールしたもの（1.5 以上）を使用し、`http://localhost:4566` の Floci に接続する。
+
+初回起動時や設定変更時は、Floci がリクエストを受け付けられる状態になってから、`r01/` で以下を実行する。
+画像アップロードを利用する前に適用を完了させる。
+
+```bash
+$ terraform -chdir=terraform init
+$ terraform -chdir=terraform plan
+$ terraform -chdir=terraform apply
+```
+
+state は `terraform/terraform.tfstate` に保存する（Git 管理対象外）。
+Floci のデータを削除した場合も state を使って再適用できる。
+既存の初期化スクリプトで作成済みのバケットを引き継ぐ場合は、初回の適用前に以下を実行する。
+
+```bash
+$ terraform -chdir=terraform init
+$ terraform -chdir=terraform import aws_s3_bucket.microposts microposts
+$ terraform -chdir=terraform apply
+```
 
 1. AWS CLI をインストールする
 
