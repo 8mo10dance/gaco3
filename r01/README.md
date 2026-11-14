@@ -7,6 +7,28 @@ $ dip up -d
 
 ## Floci の S3 を扱う方法
 
+`dip up -d` で Floci の起動を待って Terraform が S3 の設定を適用し、完了後に Rails が起動する。
+設定は `terraform/` で管理し、`microposts` バケット、所有権、公開 ACL の許可、PUT 用 CORS を作成する。
+Terraform は Docker で実行するため、ホストへのインストールは不要。
+
+設定変更時は、Floci が起動した状態で以下を実行する。
+
+```bash
+$ dip terraform init
+$ dip terraform plan
+$ dip terraform apply
+```
+
+state は `terraform/terraform.tfstate` に保存する（Git 管理対象外）。
+Floci のデータを削除した場合も state を使って再適用できる。
+既存の初期化スクリプトで作成済みのバケットを引き継ぐ場合は、初回の適用前に以下を実行する。
+
+```bash
+$ dip terraform init
+$ dip terraform import aws_s3_bucket.microposts microposts
+$ dip terraform apply
+```
+
 1. AWS CLI をインストールする
 
 2. Floci 用のプロファイルを作成する
