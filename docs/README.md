@@ -25,6 +25,7 @@
 
 ## インフラ
 
+- [TerraformでEC2にnginxを導入する（Amazon Linux 2023）](./terraform-ec2-nginx.md) — user data、cloud-init、SSH・HTTPのSG分離、起動ログとトラブル対応
 - [Floci + Terraform で学ぶ ECS/Fargate と VPC ネットワーク](./floci-terraform-ecs-fargate-notes.md) — nginx タスクの構築、VPC・SG・NACL の役割、ローカル実行と実 AWS の違い
 - [AWS 学習メモ](./aws-learning-notes.md) — AWS、Terraform、Floci、EC2 から RDS への接続手順
 - [ALB 導入から学ぶ AWS 通信・運用・Terraform](./aws-alb-learning-notes.md) — ALB、Security Group、障害切り分け、ACM、Terraform import の学習ノート
