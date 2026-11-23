@@ -1,6 +1,6 @@
 ---
 name: add-learning-document
-description: Provide a supplied learning note as a new docs/ Markdown document, update its category index, and validate the documentation set. Use for repository learning notes, not project README files.
+description: Add supplied learning notes or Markdown files, repair GitHub math formatting, or update the learning-document index as requested. Use for materials under docs/, not application README maintenance.
 ---
 
 # 学習ドキュメントの追加
@@ -10,14 +10,29 @@ description: Provide a supplied learning note as a new docs/ Markdown document, 
 ## 作業方針
 
 - 素材の意味を保って読みやすい Markdown に整理する。依頼がない限り、外部調査、事実の更新、内容の創作はしない。
-- 追加先は `docs/<english-kebab-case>.md` とする。既存ファイル名との衝突を確認する。
+- ユーザー指定の配置先・名前を優先し、複数ファイルや階層ディレクトリにも対応する。未指定時は `docs/<english-kebab-case>.md` を基本とする。
 - 文書には H1 を1つだけ置き、見出し階層を飛ばさない。コードブロックには言語を指定し、相対リンクは実在するファイルを指すようにする。
 - 既存文書と主題が実質的に重複する場合は、統合や上書きをせず、追加か統合かをユーザーに確認する。
 - `docs/README.md` を読み、最も近い既存カテゴリへ日本語のタイトルと一行説明を追記する。適切なカテゴリがなければ、新しい簡潔なカテゴリを追加する。
 - `docs/` 配下の Markdown は `0644` にする。
 - コミットは、ユーザーから明示的に依頼された場合だけ行う。
 
-## 手順
+## 既存 Markdown の取り込みと部分的な整備
+
+配置、数式修正、目次更新のうち依頼された作業だけを実施する。以下は新規メモの整理手順より優先する。
+
+- コピー前に全コピー元の存在と全配置先の衝突を確認する。シンボリックリンクも衝突とする。欠落や衝突があれば開始せず該当パスを報告する。
+- 配置先がなければ作成し、排他的なファイル作成で上書きを防ぐ。コピー元は保持する。コピー後は存在とバイト一致を確認する。
+- 無変更コピーでは内容を整形せず、数式変換や目次更新も追加しない。その他のファイルは変更しない。属性保持の明示指示も優先する。
+- 数式修正が依頼された場合は、[GitHub公式仕様](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions)と対象ソースを確認する。有効な記法を誤りと決めつけず、段落境界や Markdown との干渉を調べる。
+- 必要な表示数式は前後に空行のある `math` コードブロックにし、必要なインライン数式は $`a_n`$ の形式にする。コード内の文字列は変換しない。変更前後で数式の内容・個数・出現順序が同じことを確認する。
+- ソース検査と GitHub 上の実表示確認を区別して報告する。確認だけのために push や公開はしない。
+- 文書追加と索引整備、またはリンク追加の依頼では、学習目次 `docs/README.md` に役割の分かる日本語タイトル・一行説明・相対リンクを追加する。既存カテゴリを優先し、必要時だけカテゴリを追加する。リンクを重複させない。
+- 現行の `scripts/validate_docs.py` は直下の文書が中心である。階層内は見出し、フェンス、権限、相対リンクと目次リンクを個別にも確認する。Markdown lint は階層内も検査する。
+- 文書整備には下記の検証を用いる。無変更コピーは存在とバイト一致を検証し、検証エラーを理由に内容を自動修正しない。対象外の既存エラーも報告にとどめる。
+- ブランチ変更や push は対象外。配置・変更したパスと検証結果、衝突や未確認事項を報告する。
+
+## 新規メモを整理する手順
 
 1. `docs/README.md` と関連する既存文書を読んで、ファイル名・書式・カテゴリを決める。
 2. 新規文書と索引を更新する。
