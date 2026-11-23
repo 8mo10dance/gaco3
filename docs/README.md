@@ -17,6 +17,12 @@
 - [MVVM とは](./mvvm.md) — MVC、MVVM、Reactive Programming の関係
 - [Reactive Programming for JS](./reactive-programming-for-js.md) — JavaScript のリアクティブな状態管理
 
+## 数学
+
+- [通常型母関数：学習ノート](./math/01-01-ordinary-generating-functions/notes.md) — 定義、形式的冪級数、コーシー積、係数比較と漸化式
+- [通常型母関数：演習問題と解答](./math/01-01-ordinary-generating-functions/exercises.md) — 硬貨の数え上げ、等比級数、重複組合せ、制約付き非負整数解
+- [通常型母関数：引き継ぎメモ](./math/01-01-ordinary-generating-functions/handoff.md) — 学習状況と次回への引き継ぎ
+
 ## グラフ・アルゴリズム
 
 - [隣接行列とグラフ探索](./graph-matrix-and-search.md) — 行列累乗による到達可能性、DFS、BFS、frontier の考え方
