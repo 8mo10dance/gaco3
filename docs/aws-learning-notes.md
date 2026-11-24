@@ -909,3 +909,652 @@ terraform apply -replace='aws_instance.app'
 ```
 
 > 注意: シークレット、シェル変数、接続コマンドに含まれるパスワードを共有・記録しない。
+
+## 19. Terraform による AWS インフラ構築
+
+### 1. Terraform のバージョン管理
+
+`required_version` で Terraform 本体のバージョン制約を指定する。
+
+```hcl
+# versions.tf
+terraform {
+  required_version = "~> 1.10"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
+    }
+  }
+}
+```
+
+#### バージョン制約
+
+| 指定 | 許容されるバージョン |
+| --- | --- |
+| `1.10.0` | 1.10.0 のみ |
+| `>= 1.10.0` | 1.10.0 以上 |
+| `~> 1.10.0` | 1.10.x |
+| `~> 1.10` | 1.10 以上、2.0 未満 |
+
+`required_version` はバージョンを切り替えるものではなく、互換性を保証するための制約である。
+
+### 2. VPC
+
+```hcl
+resource "aws_vpc" "main" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+
+  tags = {
+    Name = "main"
+  }
+}
+```
+
+### 3. Subnet
+
+#### パブリックサブネット
+
+```hcl
+resource "aws_subnet" "public" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "ap-northeast-1a"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "public"
+  }
+}
+```
+
+#### プライベートサブネット
+
+```hcl
+resource "aws_subnet" "private" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.2.0/24"
+  availability_zone       = "ap-northeast-1a"
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "private"
+  }
+}
+```
+
+#### Availability Zone の指定
+
+`availability_zone` でサブネットを配置する AZ を指定する。
+
+```hcl
+availability_zone = "ap-northeast-1a"
+```
+
+利用可能な AZ を動的に取得することもできる。
+
+```hcl
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+```
+
+```hcl
+availability_zone = data.aws_availability_zones.available.names[0]
+```
+
+既存のサブネットの AZ を変更すると、サブネットは再作成される。
+
+#### 複数の AZ にサブネットを作成する
+
+```hcl
+resource "aws_subnet" "public" {
+  for_each = {
+    "ap-northeast-1a" = "10.0.1.0/24"
+    "ap-northeast-1c" = "10.0.3.0/24"
+  }
+
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = each.value
+  availability_zone = each.key
+}
+```
+
+#### map_public_ip_on_launch
+
+サブネット内で起動する EC2 にパブリック IPv4 アドレスを自動的に割り当てるかを指定する。
+
+- `true`: 自動的に割り当てる
+- `false`: 自動的に割り当てない
+
+EC2 側で個別に上書きすることもできる。
+
+```hcl
+associate_public_ip_address = true
+```
+
+パブリックサブネットかどうかを決めるのはルートテーブルであり、`map_public_ip_on_launch` ではない。
+
+### 4. Internet Gateway
+
+VPC とインターネットを接続するためのゲートウェイ。
+
+```hcl
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "main"
+  }
+}
+```
+
+EC2 がインターネットと直接 IPv4 通信するには、以下の条件が必要。
+
+- パブリック IP が割り当てられている
+- VPC に Internet Gateway が接続されている
+- ルートテーブルに Internet Gateway へのルートが存在する
+- Security Group と Network ACL で通信が許可されている
+
+### 5. NAT Gateway
+
+プライベートサブネット内の EC2 が、パブリック IP を持たずにインターネットへアクセスするために使用する。
+
+#### Elastic IP
+
+```hcl
+resource "aws_eip" "nat" {
+  domain = "vpc"
+}
+```
+
+#### NAT Gateway の作成
+
+```hcl
+resource "aws_nat_gateway" "main" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public.id
+
+  depends_on = [aws_internet_gateway.main]
+
+  tags = {
+    Name = "main"
+  }
+}
+```
+
+通常のゾーン単位の Public NAT Gateway はパブリックサブネットに配置する。
+
+通信経路は以下のようになる。
+
+```text
+EC2 (Private Subnet)
+  |
+  v
+NAT Gateway (Public Subnet)
+  |
+  v
+Internet Gateway
+  |
+  v
+Internet
+```
+
+NAT Gateway は内部から開始した通信とその応答を中継する。インターネット側からの新規接続は受け付けない。
+
+#### depends_on
+
+Terraform はリソースの属性参照から依存関係を自動的に推論する。
+
+```hcl
+subnet_id = aws_subnet.public.id
+```
+
+この場合、Subnet が作成されてから NAT Gateway が作成される。
+
+一方、NAT Gateway の定義には Internet Gateway への属性参照が存在しないため、Terraform は両者の依存関係を推論できない。
+
+そこで明示的に依存関係を指定する。
+
+```hcl
+depends_on = [aws_internet_gateway.main]
+```
+
+意味的な依存関係が存在するが、属性の参照関係が存在しない場合に `depends_on` を使用する。
+
+#### Public NAT Gateway と Private NAT Gateway
+
+| 項目 | Public NAT | Private NAT |
+| --- | --- | --- |
+| インターネット接続 | 可能 | 不可 |
+| Elastic IP | 必要 | 不要 |
+| IGW への依存 | 推奨 | 不要 |
+| 主な用途 | インターネット接続 | VPC 間・オンプレミス接続 |
+
+Private NAT Gateway の定義例：
+
+```hcl
+resource "aws_nat_gateway" "private" {
+  connectivity_type = "private"
+  subnet_id         = aws_subnet.private.id
+}
+```
+
+#### 注意事項
+
+- NAT Gateway 自体に Security Group は設定できない。
+- NAT Gateway は通信していなくても時間単位で課金される。
+- データ処理量に応じた課金も発生する。
+- EC2 を停止しても NAT Gateway の課金は止まらない。
+- 本番環境でゾーン単位の NAT Gateway を使用する場合は、可用性や AZ 間通信コストを考慮して AZ ごとに配置することを検討する。
+
+### 6. Route Table
+
+ルートテーブルは宛先 IP アドレスに応じて通信の転送先を決定する。
+
+#### パブリックサブネット用
+
+```hcl
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+
+  tags = {
+    Name = "public"
+  }
+}
+
+resource "aws_route_table_association" "public" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public.id
+}
+```
+
+#### プライベートサブネット用
+
+```hcl
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.main.id
+  }
+
+  tags = {
+    Name = "private"
+  }
+}
+
+resource "aws_route_table_association" "private" {
+  subnet_id      = aws_subnet.private.id
+  route_table_id = aws_route_table.private.id
+}
+```
+
+Internet Gateway には `gateway_id`、NAT Gateway には `nat_gateway_id` を使用する。
+
+#### ルートを独立したリソースとして管理する
+
+`route` ブロックの代わりに `aws_route` を使用することもできる。
+
+```hcl
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_route" "private_default" {
+  route_table_id         = aws_route_table.private.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.main.id
+}
+```
+
+同一ルートテーブルに対して `route` ブロックと `aws_route` を混在させない。
+
+#### local ルート
+
+VPC 内の通信に使用する `local` ルートは AWS が自動的に追加するため、Terraform で明示的に定義する必要はない。
+
+VPC の CIDR が `10.0.0.0/16` の場合、ルートテーブルは以下のようになる。
+
+**Public Route Table**
+
+| Destination | Target |
+| --- | --- |
+| 10.0.0.0/16 | local |
+| 0.0.0.0/0 | Internet Gateway |
+
+**Private Route Table**
+
+| Destination | Target |
+| --- | --- |
+| 10.0.0.0/16 | local |
+| 0.0.0.0/0 | NAT Gateway |
+
+ルーティングでは最長プレフィックス一致（Longest Prefix Match）が使用される。
+
+プライベートサブネットから通信する場合：
+
+- `10.0.1.10` 宛て：local
+- `8.8.8.8` 宛て：NAT Gateway
+
+同一 VPC 内の通常の通信は NAT Gateway や Internet Gateway を経由しない。
+
+#### サブネットとの関連付け
+
+- 1つのルートテーブルを複数のサブネットに関連付けられる。
+- 1つのサブネットに適用されるルートテーブルは1つだけ。
+- 明示的に関連付けない場合、VPC のメインルートテーブルが使用される。
+
+### 7. Security Group
+
+Security Group はリソースに対する通信の許可ルールを定義するステートフルなファイアウォール。
+
+- `ingress`: インバウンド通信
+- `egress`: アウトバウンド通信
+
+#### アウトバウンド通信用
+
+```hcl
+resource "aws_security_group" "outbound" {
+  name   = "outbound"
+  vpc_id = aws_vpc.main.id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "outbound"
+  }
+}
+```
+
+`protocol = "-1"` はすべてのプロトコルを表す。
+
+#### SSH 用
+
+```hcl
+resource "aws_security_group" "ssh" {
+  name   = "ssh"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["203.0.113.10/32"]
+  }
+
+  tags = {
+    Name = "ssh"
+  }
+}
+```
+
+`203.0.113.10` は例示用 IP アドレスなので、実際の接続元 IP アドレスに置き換える。
+
+#### HTTP / HTTPS 用
+
+```hcl
+resource "aws_security_group" "web" {
+  name   = "web"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "web"
+  }
+}
+```
+
+`from_port = 80`、`to_port = 443` とすると、その間のすべてのポートを許可してしまうため注意する。
+
+#### dynamic ブロックによる記述
+
+ポート番号以外の設定が同じ場合は、`dynamic` ブロックでまとめられる。
+
+```hcl
+resource "aws_security_group" "web" {
+  name   = "web"
+  vpc_id = aws_vpc.main.id
+
+  dynamic "ingress" {
+    for_each = [80, 443]
+
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+}
+```
+
+#### Security Group を接続元として指定する
+
+ALB からの通信のみを許可する場合などに使用する。
+
+```hcl
+ingress {
+  from_port       = 80
+  to_port         = 80
+  protocol        = "tcp"
+  security_groups = [aws_security_group.alb.id]
+}
+```
+
+IP アドレスではなく、接続元リソースに割り当てられた Security Group に基づいて通信を許可できる。
+
+#### ルールを独立したリソースとして管理する
+
+```hcl
+resource "aws_vpc_security_group_ingress_rule" "ssh" {
+  security_group_id = aws_security_group.ssh.id
+
+  cidr_ipv4   = "203.0.113.10/32"
+  ip_protocol = "tcp"
+  from_port   = 22
+  to_port     = 22
+}
+```
+
+```hcl
+resource "aws_vpc_security_group_egress_rule" "outbound" {
+  security_group_id = aws_security_group.outbound.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  ip_protocol = "-1"
+}
+```
+
+同一 Security Group に対してインラインの `ingress` / `egress` ブロックと独立したルールリソースを混在させない。
+
+#### EC2 Instance Connect 用
+
+ブラウザ経由の EC2 Instance Connect では、AWS のマネージドプレフィックスリストを利用できる。
+
+```hcl
+data "aws_ec2_managed_prefix_list" "ssh" {
+  name = "com.amazonaws.ap-northeast-1.ec2-instance-connect"
+}
+```
+
+```hcl
+ingress {
+  from_port       = 22
+  to_port         = 22
+  protocol        = "tcp"
+  prefix_list_ids = [data.aws_ec2_managed_prefix_list.ssh.id]
+}
+```
+
+#### Security Group の特徴
+
+- 1つの EC2 に複数の Security Group を割り当てられる。
+- 複数の Security Group の許可ルールは OR 条件で評価される。
+- 明示的な拒否ルールは存在しない。
+- 許可された通信に対する応答は、逆方向の許可ルールがなくても通過できる（ステートフル）。
+
+### 8. EC2
+
+#### AMI の取得
+
+SSM Parameter Store から Amazon Linux 2023 の最新 AMI を取得する。
+
+```hcl
+data "aws_ssm_parameter" "ami" {
+  name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+}
+```
+
+AMI ID を直接指定する必要がなく、リージョンごとの AMI ID の違いを吸収できる。
+
+ただし、最新 AMI が更新されると Terraform の実行時に EC2 の再作成が発生する可能性がある。再現性を重視する場合は AMI を固定する。
+
+#### EC2 インスタンスの作成
+
+```hcl
+resource "aws_instance" "main" {
+  ami                         = data.aws_ssm_parameter.ami.value
+  instance_type               = "t3.micro"
+  subnet_id                   = aws_subnet.private.id
+  associate_public_ip_address = false
+
+  vpc_security_group_ids = [
+    aws_security_group.outbound.id,
+    aws_security_group.ssh.id,
+    aws_security_group.web.id,
+  ]
+
+  tags = {
+    Name = "main"
+  }
+}
+```
+
+パブリックサブネットに配置する場合は以下のように変更する。
+
+```hcl
+subnet_id                   = aws_subnet.public.id
+associate_public_ip_address = true
+```
+
+#### user_data
+
+EC2 の初回起動時に実行するスクリプトを指定する。
+
+```hcl
+user_data = <<-EOF
+  #!/bin/bash
+  dnf install -y nginx
+  systemctl enable --now nginx
+EOF
+
+user_data_replace_on_change = true
+```
+
+外部ファイルとして管理することもできる。
+
+```hcl
+user_data = file("${path.module}/user_data.sh")
+```
+
+`user_data_replace_on_change = true` を指定すると、`user_data` の変更時に EC2 が再作成される。
+
+初回起動時からインターネット接続が必要な場合は、ルートテーブルの関連付けが完了してから EC2 を作成するように依存関係を追加するとよい。
+
+```hcl
+depends_on = [
+  aws_route_table_association.public,
+  aws_route_table_association.private,
+]
+```
+
+#### プライベートサブネット内の EC2 への接続
+
+プライベートサブネット内の EC2 はパブリック IP を持たないため、Security Group で SSH を許可するだけではインターネットから直接接続できない。
+
+接続方法には以下がある。
+
+- SSM Session Manager
+- EC2 Instance Connect Endpoint
+- 踏み台サーバー（Bastion Host）
+
+SSM Session Manager を利用する場合は、SSM Agent、適切な IAM ロール、SSM サービスへの通信経路が必要となる。
+
+### 9. 全体構成
+
+```text
+Internet
+    |
+Internet Gateway
+    |
+VPC (10.0.0.0/16)
+    |
+    +-- Public Subnet (10.0.1.0/24)
+    |     |
+    |     +-- NAT Gateway
+    |     |     +-- Elastic IP
+    |     |
+    |     +-- Route Table
+    |           +-- 10.0.0.0/16 -> local
+    |           +-- 0.0.0.0/0   -> IGW
+    |
+    +-- Private Subnet (10.0.2.0/24)
+          |
+          +-- EC2
+          |     +-- Security Group (Outbound)
+          |     +-- Security Group (SSH)
+          |     +-- Security Group (Web)
+          |
+          +-- Route Table
+                +-- 10.0.0.0/16 -> local
+                +-- 0.0.0.0/0   -> NAT Gateway
+```
+
+### 10. Terraform リソース一覧
+
+| リソース | 役割 |
+| --- | --- |
+| `aws_vpc` | 仮想ネットワーク |
+| `aws_subnet` | VPC 内のネットワーク分割 |
+| `aws_internet_gateway` | インターネットへの接続 |
+| `aws_eip` | 固定パブリック IPv4 アドレス |
+| `aws_nat_gateway` | プライベート IP のアドレス変換 |
+| `aws_route_table` | ルーティングテーブル |
+| `aws_route` | 個別のルーティングルール |
+| `aws_route_table_association` | サブネットとルートテーブルの関連付け |
+| `aws_security_group` | 通信の許可ルール |
+| `aws_vpc_security_group_ingress_rule` | 個別のインバウンドルール |
+| `aws_vpc_security_group_egress_rule` | 個別のアウトバウンドルール |
+| `aws_instance` | EC2 インスタンス |
