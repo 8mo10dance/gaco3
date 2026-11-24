@@ -1,7 +1,7 @@
 interface:
-  display_name: "学習ドキュメント追加"
-  short_description: "学習メモを docs に追加し索引と品質を整える"
-  default_prompt: "Use $add-learning-document to add this learning note to docs/."
+  display_name: "学習ドキュメント追加・整備"
+  short_description: "学習資料の配置、GitHub 数式の修正、目次へのリンク追加に対応する"
+  default_prompt: "Use $add-learning-document to place these learning materials in docs/ and update the index as requested."
 
 policy:
   allow_implicit_invocation: true
