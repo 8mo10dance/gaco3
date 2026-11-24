@@ -27,7 +27,7 @@
 
 - [TerraformでEC2にnginxを導入する（Amazon Linux 2023）](./terraform-ec2-nginx.md) — user data、cloud-init、SSH・HTTPのSG分離、起動ログとトラブル対応
 - [Floci + Terraform で学ぶ ECS/Fargate と VPC ネットワーク](./floci-terraform-ecs-fargate-notes.md) — nginx タスクの構築、VPC・SG・NACL の役割、ローカル実行と実 AWS の違い
-- [AWS 学習メモ](./aws-learning-notes.md) — AWS、Terraform、Floci、EC2 から RDS への接続手順
+- [AWS 学習メモ](./aws-learning-notes.md) — AWS、Terraform、Floci、EC2 から RDS への接続手順、VPC・NAT・ルートテーブル・Security Group・EC2 の構築例
 - [ALB 導入から学ぶ AWS 通信・運用・Terraform](./aws-alb-learning-notes.md) — ALB、Security Group、障害切り分け、ACM、Terraform import の学習ノート
 - [OSI参照モデルとネットワーク基礎](./osi-network-basics.md) — OSI、Ethernet、ARP、AWSネットワーク、HTTP/3・QUIC、TLSの関係
 - [IaaS・PaaS・FaaS まとめ](./cloud-service-models.md) — クラウドサービスモデルと EC2、Fargate の比較
@@ -42,6 +42,7 @@
 
 ## ツール・環境構築
 
+- [Vim による文字列置換](./vim-text-substitution.md) — 置換コマンド、選択範囲の指定、区切り文字の変更
 - [Devbox 導入・使い方・Git管理まとめ](./devbox-guide.md) — Devbox の導入、利用、設定管理
 - [Docker on WSL2 トラブルシューティング](./docker-wsl2-troubleshooting.md) — 権限とクレデンシャル関連の問題
 - [Linux で ps が使えない場合の対応](./troubleshooting-ps.md) — ps の導入方法と Docker・ss・/proc によるプロセス確認
